@@ -5,6 +5,7 @@ import {
   Wallet, Ticket, Gift, ReceiptText, ShieldCheck, 
   LifeBuoy, LogOut, ChevronLeft 
 } from 'lucide-react';
+import logo from '../../assets/Group 644.svg';
 
 const Sidebar = ({ 
   isMobileOpen, 
@@ -55,15 +56,15 @@ const Sidebar = ({
   }, [currentPath]);
 
   const menuItems = [
-    { path: '/dashboard', icon: LayoutDashboard, label: 'System Overview' },
-    { path: '/users', icon: Users, label: 'User Management' },
-    { path: '/orders', icon: ShoppingBag, label: 'Order Management' },
-    { path: '/vendors', icon: Store, label: 'Vendor Management' },
-    { path: '/riders', icon: Bike, label: 'Rider Management' },
-    { path: '/revenue', icon: Wallet, label: 'Revenue' },
-    { path: '/vouchers', icon: Ticket, label: 'Vouchers' },
-    { path: '/special-orders', icon: Gift, label: 'Special Orders' },
-    { path: '/transactions', icon: ReceiptText, label: 'Transactions' },
+    { path: '/dashboard', icon: LayoutDashboard, label: 'System Overview', initials: 'SO' },
+    { path: '/users', icon: Users, label: 'User Management', initials: 'UM' },
+    { path: '/orders', icon: ShoppingBag, label: 'Order Management', initials: 'OM' },
+    { path: '/vendors', icon: Store, label: 'Vendor Management', initials: 'VM' },
+    { path: '/riders', icon: Bike, label: 'Rider Management', initials: 'RM' },
+    { path: '/revenue', icon: Wallet, label: 'Revenue', initials: 'RV' },
+    { path: '/vouchers', icon: Ticket, label: 'Vouchers', initials: 'VC' },
+    { path: '/special-orders', icon: Gift, label: 'Special Orders', initials: 'SP' },
+    { path: '/transactions', icon: ReceiptText, label: 'Transactions', initials: 'TX' },
   ];
 
   const isRouteActive = (menuPath) => {
@@ -95,9 +96,18 @@ const Sidebar = ({
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         <div className={`p-6 pb-2 flex items-center justify-between ${isCollapsed ? 'flex-col gap-4' : ''}`}>
-          {!isCollapsed && (
-            <h1 className="text-[#f57c00] text-xl font-bold tracking-tight">ChowTap</h1>
-          )}
+          {/* Logo is always visible; text only shows when expanded */}
+          <div className={`flex items-center gap-2 ${isCollapsed ? 'justify-center' : ''}`}>
+            <img 
+              src={logo} 
+              alt="ChowTap logo" 
+              className="w-7 h-7 flex-shrink-0 object-contain"
+            />
+            {!isCollapsed && (
+              <h1 className="text-[#f57c00] text-xl font-bold tracking-tight">ChowTap</h1>
+            )}
+          </div>
+
           <button 
             onClick={onToggleCollapse}
             className="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:text-[#f57c00] transition-all"
@@ -150,16 +160,26 @@ const Sidebar = ({
                       onClick={handleLinkClick}
                       className={`
                         w-full flex items-center transition-all duration-200 rounded-lg
-                        ${isCollapsed ? 'justify-center py-3' : 'py-2.5 px-4 gap-4'}
+                        ${isCollapsed ? 'justify-center py-2.5' : 'py-2.5 px-4 gap-4'}
                         ${isActive 
                           ? 'bg-[#1a1a1a] text-[#f57c00]' 
                           : 'text-[#8a8a8a] hover:text-white hover:bg-white/5'
                         }
                       `}
                     >
-                      <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-                      {!isCollapsed && (
-                        <span className="text-[13px] font-medium tracking-wide whitespace-nowrap">{item.label}</span>
+                      {isCollapsed ? (
+                        <div className="flex items-center gap-1.5">
+                          <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+                          <span className={`text-[9px] font-bold tracking-widest uppercase leading-none transition-all
+                            ${isActive ? 'text-[#f57c00]' : 'text-[#555] group-hover:text-[#888]'}`}>
+                            {item.initials}
+                          </span>
+                        </div>
+                      ) : (
+                        <>
+                          <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                          <span className="text-[13px] font-medium tracking-wide whitespace-nowrap">{item.label}</span>
+                        </>
                       )}
                       
                       {isActive && (

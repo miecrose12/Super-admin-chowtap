@@ -262,14 +262,14 @@ const OrdersView = () => {
           )}
 
           <div className="relative" ref={dropdownRef}>
-            <button 
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center justify-between gap-3 bg-[#161616] hover:bg-[#1f1f1f] text-[#d4d4d4] px-4 py-2.5 rounded-[4px] text-[12px] font-medium border border-[#262626] transition-colors min-w-[150px]"
-            >
-              <span className="material-symbols-outlined text-[16px] text-[#888]">calendar_today</span>
-              {selectedPeriod}
-              <span className="material-symbols-outlined text-[16px]">expand_more</span>
-            </button>
+           <button 
+  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+  className="flex items-center justify-between gap-3 bg-[#161616] hover:bg-[#1f1f1f] text-[#d4d4d4] px-4 py-2.5 rounded-[4px] text-[12px] font-medium border border-[#262626] transition-colors min-w-[150px]"
+>
+  <Calendar size={16} className="text-[#888]" />
+  {selectedPeriod}
+  <ChevronDown size={16} />
+</button>
 
             {isDropdownOpen && (
               <div className="absolute right-0 top-[calc(100%+8px)] w-full bg-[#161616] border border-[#262626] rounded-[6px] shadow-2xl py-1 z-50">
