@@ -20,14 +20,12 @@ const Sidebar = ({
   const [scrollPercentage, setScrollPercentage] = useState(0);
   const [showIndicator, setShowIndicator] = useState(false);
 
-  // This function checks if the screen "needs" to scroll
   const updateScrollProgress = () => {
     const container = scrollContainerRef.current;
     if (container) {
       const { scrollTop, scrollHeight, clientHeight } = container;
       const totalScrollable = scrollHeight - clientHeight;
       
-      // If content is taller than the container, show the line immediately
       setShowIndicator(totalScrollable > 0);
       
       if (totalScrollable > 0) {
@@ -37,10 +35,8 @@ const Sidebar = ({
     }
   };
 
-  // Run on mount and whenever the menu might change height
   useEffect(() => {
     updateScrollProgress();
-    // Add a small delay to catch layout shifts
     const timer = setTimeout(updateScrollProgress, 100);
     
     window.addEventListener('resize', updateScrollProgress);
@@ -48,7 +44,15 @@ const Sidebar = ({
       window.removeEventListener('resize', updateScrollProgress);
       clearTimeout(timer);
     };
-  }, [isCollapsed]); // Re-check when sidebar collapses/expands
+  }, [isCollapsed]);
+
+  // Scroll to top when route changes
+  useEffect(() => {
+    const mainContent = document.querySelector('main') || 
+                       document.querySelector('[role="main"]') || 
+                       document.documentElement;
+    mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPath]);
 
   const menuItems = [
     { path: '/dashboard', icon: LayoutDashboard, label: 'System Overview' },
@@ -62,17 +66,20 @@ const Sidebar = ({
     { path: '/transactions', icon: ReceiptText, label: 'Transactions' },
   ];
 
-  // Helper function to check if a route is active
   const isRouteActive = (menuPath) => {
-    // Exact match or root/dashboard match
     if (currentPath === menuPath || (currentPath === '/' && menuPath === '/dashboard')) {
       return true;
     }
-    // Match nested routes (e.g., /dashboard/details matches /dashboard)
     if (currentPath.startsWith(menuPath + '/')) {
       return true;
     }
     return false;
+  };
+
+  const handleLinkClick = () => {
+    if (isMobileOpen) {
+      onCloseMobile();
+    }
   };
 
   return (
@@ -87,7 +94,6 @@ const Sidebar = ({
           ${isCollapsed ? 'w-20' : 'w-72'}
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
-        {/* Header */}
         <div className={`p-6 pb-2 flex items-center justify-between ${isCollapsed ? 'flex-col gap-4' : ''}`}>
           {!isCollapsed && (
             <h1 className="text-[#f57c00] text-xl font-bold tracking-tight">ChowTap</h1>
@@ -100,7 +106,6 @@ const Sidebar = ({
           </button>
         </div>
 
-        {/* Profile Card */}
         <div className={`px-4 mb-2 mt-4 ${isCollapsed ? 'flex justify-center' : ''}`}>
           <div className={`flex items-center gap-3 p-2 bg-white/5 rounded-xl transition-all ${isCollapsed ? 'w-12 h-12 justify-center' : ''}`}>
             <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] flex items-center justify-center flex-shrink-0">
@@ -115,10 +120,7 @@ const Sidebar = ({
           </div>
         </div>
 
-        {/* Main Nav Area */}
         <div className="relative flex-1 flex flex-col overflow-hidden">
-          
-          {/* WHITE SCROLL INDICATOR (Shows immediately if scrollable) */}
           {showIndicator && (
             <div className="absolute right-1.5 top-2 bottom-2 w-[2px] bg-white/5 rounded-full z-20">
               <div 
@@ -145,7 +147,7 @@ const Sidebar = ({
                   <li key={item.path} className="relative group">
                     <Link
                       to={item.path}
-                      onClick={() => isMobileOpen && onCloseMobile()}
+                      onClick={handleLinkClick}
                       className={`
                         w-full flex items-center transition-all duration-200 rounded-lg
                         ${isCollapsed ? 'justify-center py-3' : 'py-2.5 px-4 gap-4'}
@@ -171,12 +173,10 @@ const Sidebar = ({
           </div>
         </div>
 
-        {/* ORANGE SEPARATOR LINE (Separates menu from support/logout) */}
         <div className="px-6 py-2">
             <div className="h-[1px] w-full bg-[#f57c00]/40 shadow-[0_0_8px_rgba(245,124,0,0.3)]" />
         </div>
 
-        {/* Footer */}
         <div className="pb-4 px-3 bg-[#0d0d0d]">
           <div className="space-y-0.5">
             <button className={`w-full flex items-center gap-4 text-[#8a8a8a] hover:text-white rounded-lg transition-colors ${isCollapsed ? 'justify-center py-3' : 'px-4 py-2'}`}>

@@ -1,21 +1,68 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// Generating mock data so we have enough rows to paginate through
+const generateMockData = (count) => {
+  return Array.from({ length: count }, (_, index) => ({
+    id: index + 1,
+    name: `Raheem Inioluwa ${index + 1}`,
+    email: `inioluwa${index + 1}@gmail.com`,
+    phone: `+234 706-564-${(1000 + index).toString().slice(-4)}`,
+    orders: Math.floor(Math.random() * 500) + 10,
+    spent: `₦ ${(Math.random() * 5000 + 100).toFixed(2)}`,
+    date: "12/02/2025",
+    time: "10:34AM",
+    status: index % 3 === 0 ? "INACTIVE" : "ACTIVE",
+  }));
+};
 
 export default function User() {
   const navigate = useNavigate();
+  
+  // 1. Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7; // Number of rows per page
 
-  const tableData = [
-    { id: 1, name: "Raheem Inioluwa", email: "inioluwa@gmail.com", phone: "+234 706-564-6785", orders: 456, spent: "₦ 2,560.00", date: "12/02/2025", time: "10:34AM", status: "ACTIVE" },
-    { id: 2, name: "Raheem Inioluwa", email: "inioluwa@gmail.com", phone: "+234 706-564-6785", orders: 456, spent: "₦ 2,560.00", date: "12/02/2025", time: "10:34AM", status: "ACTIVE" },
-    { id: 3, name: "Raheem Inioluwa", email: "inioluwa@gmail.com", phone: "+234 706-564-6785", orders: 456, spent: "₦ 2,560.00", date: "12/02/2025", time: "10:34AM", status: "INACTIVE" },
-    { id: 4, name: "Raheem Inioluwa", email: "inioluwa@gmail.com", phone: "+234 706-564-6785", orders: 456, spent: "₦ 2,560.00", date: "12/02/2025", time: "10:34AM", status: "ACTIVE" },
-    { id: 5, name: "Raheem Inioluwa", email: "inioluwa@gmail.com", phone: "+234 706-564-6785", orders: 456, spent: "₦ 2,560.00", date: "12/02/2025", time: "10:34AM", status: "ACTIVE" },
-    { id: 6, name: "Raheem Inioluwa", email: "inioluwa@gmail.com", phone: "+234 706-564-6785", orders: 456, spent: "₦ 2,560.00", date: "12/02/2025", time: "10:34AM", status: "ACTIVE" },
-    { id: 7, name: "Raheem Inioluwa", email: "inioluwa@gmail.com", phone: "+234 706-564-6785", orders: 456, spent: "₦ 2,560.00", date: "12/02/2025", time: "10:34AM", status: "ACTIVE" },
-  ];
+  // 2. Data source (Using 45 items to demonstrate multiple pages)
+  const allUsers = useMemo(() => generateMockData(45), []);
+
+  // 3. Derived values for current page
+  const totalItems = allUsers.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentData = allUsers.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleRowClick = () => {
     navigate('/users/edit');
+  };
+
+  // 4. Pagination Handlers
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(prev => prev - 1);
+  };
+
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // 5. Helper to generate page numbers with ellipses (e.g., 1 2 3 ... 10)
+  const getPaginationGroup = () => {
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    if (currentPage <= 3) {
+      return [1, 2, 3, '...', totalPages];
+    }
+    if (currentPage >= totalPages - 2) {
+      return [1, '...', totalPages - 2, totalPages - 1, totalPages];
+    }
+    return [1, '...', currentPage, '...', totalPages];
   };
 
   return (
@@ -30,19 +77,16 @@ export default function User() {
         </div>
 
         {/* Top Cards Grid */}
-        {/* Added mb-8 here to separate the cards from the search bar below */}
         <div className="flex flex-col lg:flex-row gap-4 xl:gap-6 w-full mb-8">
-          
           {/* Total Users Card */}
           <div className="bg-[#1C1C1C] rounded-lg px-5 py-5 xl:px-6 xl:py-6 border-l-[3px] border-[#DC781B] flex-1 flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden">
-            
             <div className="flex-shrink-0">
               <p className="text-[10px] lg:text-[11px] font-bold tracking-widest text-[#A1A1AA] mb-2 uppercase">
                 TOTAL USERS
               </p>
               <div className="flex flex-col">
                 <span className="text-[2rem] lg:text-[2.25rem] font-bold leading-none mb-1.5 text-white">
-                  2,267
+                  {totalItems.toLocaleString()}
                 </span>
                 <span className="text-[#10B981] text-[10px] lg:text-xs font-semibold tracking-wide flex items-center gap-1">
                   ~ 12.4% <span className="text-[#00c564]/80 font-medium">from last month</span>
@@ -61,7 +105,6 @@ export default function User() {
                 </span>
               </div>
               
-              {/* Divider */}
               <div className="hidden sm:block w-px h-10 lg:h-12 bg-gray-700/60"></div>
               
               <div className="flex flex-col">
@@ -77,12 +120,9 @@ export default function User() {
 
           {/* Biggest Customer Card */}
           <div className="bg-[#1C1C1C] rounded-lg p-5 xl:p-7 w-full lg:w-[280px] xl:w-[340px] 2xl:w-[400px] flex flex-col relative overflow-hidden flex-shrink-0">
-            
-            {/* Shield Check Watermark Background */}
             <svg className="absolute -bottom-6 -right-6 w-40 h-40 xl:w-48 xl:h-48 text-white/[0.03]" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
             </svg>
-
             <div className="relative z-10 flex flex-col h-full justify-between">
               <div>
                 <p className="text-[10px] font-bold tracking-widest text-[#DC781B] mb-2 uppercase">
@@ -96,7 +136,6 @@ export default function User() {
                   {' '}orders and spent <strong className="text-white font-semibold">₦270,000.00</strong>.
                 </p>
               </div>
-
               <button className="w-full xl:w-[130px] bg-[#DC781B] hover:bg-[#e88832] transition-colors text-black font-bold py-2.5 rounded text-[12px] xl:text-[13px] mt-auto">
                 Review user
               </button>
@@ -127,20 +166,20 @@ export default function User() {
 
         {/* Table */}
         <div className="bg-[#0A0A0A] rounded-md overflow-hidden border border-gray-900/50">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto min-h-[400px]">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-[#121212] border-b border-gray-800">
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]-500">USER PROFILE</th>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]-500">PHONE NUMBER</th>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]-500">ORDERS</th>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]-500">TOTAL SPENT</th>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]-500">LAST ACTIVITY</th>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]-500">STATUS</th>
+                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]">USER PROFILE</th>
+                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]">PHONE NUMBER</th>
+                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]">ORDERS</th>
+                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]">TOTAL SPENT</th>
+                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]">LAST ACTIVITY</th>
+                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-[#C7C7C7]">STATUS</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800/60">
-                {tableData.map((row) => (
+                {currentData.map((row) => (
                   <tr 
                     key={row.id} 
                     onClick={handleRowClick}
@@ -175,17 +214,54 @@ export default function User() {
             </table>
           </div>
 
-          {/* Pagination */}
+          {/* Dynamic Pagination Control */}
           <div className="px-6 py-5 flex items-center justify-between text-[12px]">
-            <p className="text-gray-500">Showing 1-10 of 14560 orders</p>
+            <p className="text-gray-500">
+              Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalItems)} of {totalItems} users
+            </p>
             <div className="flex items-center gap-1.5">
-              <button className="w-7 h-7 flex items-center justify-center rounded text-gray-600 hover:text-white transition-colors text-lg pb-0.5">&lt;</button>
-              <button className="w-7 h-7 flex items-center justify-center rounded bg-[#DC781B] text-black font-bold">1</button>
-              <button className="w-7 h-7 flex items-center justify-center rounded text-gray-500 hover:text-white transition-colors">2</button>
-              <button className="w-7 h-7 flex items-center justify-center rounded text-gray-500 hover:text-white transition-colors">3</button>
-              <span className="w-7 h-7 flex items-center justify-center text-gray-600 tracking-widest">...</span>
-              <button className="h-7 px-1 flex items-center justify-center rounded text-gray-500 hover:text-white transition-colors">1456</button>
-              <button className="w-7 h-7 flex items-center justify-center rounded text-gray-600 hover:text-white transition-colors text-lg pb-0.5">&gt;</button>
+              {/* Prev Button */}
+              <button 
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+                className={`w-7 h-7 flex items-center justify-center rounded text-lg pb-0.5 transition-colors ${
+                  currentPage === 1 ? "text-gray-700 cursor-not-allowed" : "text-gray-600 hover:text-white"
+                }`}
+              >
+                &lt;
+              </button>
+
+              {/* Page Numbers */}
+              {getPaginationGroup().map((item, index) => (
+                item === '...' ? (
+                  <span key={`dots-${index}`} className="w-7 h-7 flex items-center justify-center text-gray-600 tracking-widest">
+                    ...
+                  </span>
+                ) : (
+                  <button 
+                    key={item}
+                    onClick={() => handlePageClick(item)}
+                    className={`w-7 h-7 flex items-center justify-center rounded transition-colors ${
+                      currentPage === item 
+                        ? "bg-[#DC781B] text-black font-bold" 
+                        : "text-gray-500 hover:text-white"
+                    }`}
+                  >
+                    {item}
+                  </button>
+                )
+              ))}
+
+              {/* Next Button */}
+              <button 
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className={`w-7 h-7 flex items-center justify-center rounded text-lg pb-0.5 transition-colors ${
+                  currentPage === totalPages ? "text-gray-700 cursor-not-allowed" : "text-gray-600 hover:text-white"
+                }`}
+              >
+                &gt;
+              </button>
             </div>
           </div>
         </div>

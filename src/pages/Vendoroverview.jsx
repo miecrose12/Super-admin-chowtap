@@ -272,13 +272,11 @@ const OverviewTab = () => (
   </div>
 );
 
-
-
-
-
 const MenuTab = () => {
-  // 1. Move the products array into React state
-  const [products, setProducts] = useState([
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
+  const allProducts = [
     { 
       id: 'PRD-772', 
       line1: 'Signature', 
@@ -319,9 +317,113 @@ const MenuTab = () => {
       available: true, 
       img: 'https://images.unsplash.com/photo-1572490122747-398b37c7e992?auto=format&fit=crop&w=64&h=64' 
     },
-  ]);
+    { 
+      id: 'PRD-333', 
+      line1: 'Classic', 
+      line2: 'Cheese Burger', 
+      cat: 'Main dish', 
+      price: '₦2,000.00', 
+      status: 'AVAILABLE', 
+      available: true, 
+      img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=64&h=64' 
+    },
+    { 
+      id: 'PRD-444', 
+      line1: 'Sweet', 
+      line2: 'Potato Fries', 
+      cat: 'Side dish', 
+      price: '₦1,200.00', 
+      status: 'AVAILABLE', 
+      available: true, 
+      img: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=64&h=64' 
+    },
+    { 
+      id: 'PRD-555', 
+      line1: 'Grilled', 
+      line2: 'Chicken Wings', 
+      cat: 'Protein', 
+      price: '₦1,500.00', 
+      status: 'AVAILABLE', 
+      available: true, 
+      img: 'https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=64&h=64' 
+    },
+    { 
+      id: 'PRD-666', 
+      line1: 'Vanilla', 
+      line2: 'Milkshake', 
+      cat: 'Drink', 
+      price: '₦1,300.00', 
+      status: 'AVAILABLE', 
+      available: true, 
+      img: 'https://images.unsplash.com/photo-1572490122747-398b37c7e992?auto=format&fit=crop&w=64&h=64' 
+    },
+    { 
+      id: 'PRD-777', 
+      line1: 'Deluxe', 
+      line2: 'BBQ Burger', 
+      cat: 'Main dish', 
+      price: '₦3,000.00', 
+      status: 'UNAVAILABLE', 
+      available: false, 
+      img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=64&h=64' 
+    },
+    { 
+      id: 'PRD-888', 
+      line1: 'Garlic', 
+      line2: 'Parmesan Fries', 
+      cat: 'Side dish', 
+      price: '₦1,600.00', 
+      status: 'AVAILABLE', 
+      available: true, 
+      img: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=64&h=64' 
+    },
+    { 
+      id: 'PRD-999', 
+      line1: 'Honey', 
+      line2: 'Glazed Wings', 
+      cat: 'Protein', 
+      price: '₦1,400.00', 
+      status: 'AVAILABLE', 
+      available: true, 
+      img: 'https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=64&h=64' 
+    },
+    { 
+      id: 'PRD-1010', 
+      line1: 'Strawberry', 
+      line2: 'Milkshake', 
+      cat: 'Drink', 
+      price: '₦1,400.00', 
+      status: 'AVAILABLE', 
+      available: true, 
+      img: 'https://images.unsplash.com/photo-1572490122747-398b37c7e992?auto=format&fit=crop&w=64&h=64' 
+    },
+    { 
+      id: 'PRD-1111', 
+      line1: 'Triple', 
+      line2: 'Decker Burger', 
+      cat: 'Main dish', 
+      price: '₦3,500.00', 
+      status: 'AVAILABLE', 
+      available: true, 
+      img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=64&h=64' 
+    },
+    { 
+      id: 'PRD-1212', 
+      line1: 'Loaded', 
+      line2: 'Cheese Fries', 
+      cat: 'Side dish', 
+      price: '₦2,000.00', 
+      status: 'AVAILABLE', 
+      available: true, 
+      img: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=64&h=64' 
+    },
+  ];
 
-  // 2. Create a handler function to toggle availability by product ID
+  const [products, setProducts] = useState(allProducts);
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const currentProducts = products.slice(startIdx, startIdx + itemsPerPage);
+
   const handleToggleAvailability = (productId) => {
     setProducts((prevProducts) =>
       prevProducts.map((product) => {
@@ -330,13 +432,32 @@ const MenuTab = () => {
           return {
             ...product,
             available: newAvailability,
-            // Also update the text status so the badge matches the toggle
             status: newAvailability ? 'AVAILABLE' : 'UNAVAILABLE', 
           };
         }
         return product;
       })
     );
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('...');
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+        if (!pages.includes(i)) pages.push(i);
+      }
+      if (currentPage < totalPages - 2) pages.push('...');
+      pages.push(totalPages);
+    }
+    return pages;
   };
 
   return (
@@ -379,7 +500,7 @@ const MenuTab = () => {
               </tr>
             </thead>
             <tbody className="text-sm">
-              {products.map((item, i) => (
+              {currentProducts.map((item) => (
                 <tr key={item.id} className="border-b border-neutral-800/80 hover:bg-neutral-800/30 transition-colors">
                   <td className="py-4 pl-6 pr-4 flex items-center gap-4">
                     <img 
@@ -405,7 +526,6 @@ const MenuTab = () => {
                     </span>
                   </td>
                   <td className="p-4">
-                    {/* 3. Attach the onClick handler to your toggle container */}
                     <div 
                       onClick={() => handleToggleAvailability(item.id)}
                       className={`w-[42px] h-[22px] rounded-full relative cursor-pointer transition-colors ${
@@ -434,28 +554,40 @@ const MenuTab = () => {
         {/* Pagination Section */}
         <div className="flex justify-between items-center pt-2">
           <div className="text-[11px] font-bold text-neutral-500 tracking-widest uppercase">
-            Showing 1-4 of 56 Products
+            Showing {startIdx + 1}-{Math.min(startIdx + itemsPerPage, products.length)} of {products.length} Products
           </div>
           <div className="flex gap-1.5">
-            <button className="w-8 h-8 flex items-center justify-center bg-[#1a1a1a] rounded text-neutral-500 hover:bg-neutral-800 transition-colors">
+            <button 
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="w-8 h-8 flex items-center justify-center bg-[#1a1a1a] rounded text-neutral-500 hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <ChevronLeft size={16} />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center bg-[#e58230] text-white font-semibold rounded">
-              1
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center bg-[#1a1a1a] text-white font-semibold rounded hover:bg-neutral-800 transition-colors">
-              2
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center bg-[#1a1a1a] text-white font-semibold rounded hover:bg-neutral-800 transition-colors">
-              3
-            </button>
-            <div className="w-8 h-8 flex items-center justify-center text-neutral-500 font-semibold tracking-widest">
-              ...
-            </div>
-            <button className="w-8 h-8 flex items-center justify-center bg-[#1a1a1a] text-white font-semibold rounded hover:bg-neutral-800 transition-colors">
-              14
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center bg-[#1a1a1a] rounded text-neutral-500 hover:bg-neutral-800 transition-colors">
+            {getPageNumbers().map((page, idx) => (
+              page === '...' ? (
+                <div key={`dots-${idx}`} className="w-8 h-8 flex items-center justify-center text-neutral-500 font-semibold tracking-widest">
+                  ...
+                </div>
+              ) : (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`w-8 h-8 flex items-center justify-center rounded text-sm font-semibold transition-colors ${
+                    currentPage === page
+                      ? 'bg-[#e58230] text-white'
+                      : 'bg-[#1a1a1a] text-white hover:bg-neutral-800'
+                  }`}
+                >
+                  {page}
+                </button>
+              )
+            ))}
+            <button 
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="w-8 h-8 flex items-center justify-center bg-[#1a1a1a] rounded text-neutral-500 hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <ChevronRight size={16} />
             </button>
           </div>
@@ -466,18 +598,48 @@ const MenuTab = () => {
   );
 };
 
-
-
-
-
 const OrdersTab = () => {
-  const orders = [
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const allOrders = [
     { id: '#ORD-88219', init: 'JD', name: 'John Doe', date: 'Oct 24, 2023', time: '14:22 PM', items: 'Double BBQ × 2, Truffle Fries', total: '₦12,400.00', status: 'DELIVERED', sColor: 'text-emerald-500', sBg: 'bg-emerald-900/30' },
     { id: '#ORD-88220', init: 'SC', name: 'Sarah Chen', date: 'Oct 24, 2023', time: '14:45 PM', items: 'Classic Cheese × 1, Milkshake', total: '₦8,500.00', status: 'PENDING', sColor: 'text-orange-500', sBg: 'bg-orange-900/30' },
     { id: '#ORD-88221', init: 'MT', name: 'Mike Tunde', date: 'Oct 24, 2023', time: '15:10 PM', items: 'Zinger Tower × 3', total: '₦15,000.00', status: 'ON ROUTE', sColor: 'text-blue-500', sBg: 'bg-blue-900/30' },
     { id: '#ORD-88222', init: 'AL', name: 'Amara Lawson', date: 'Oct 24, 2023', time: '15:32 PM', items: 'Mushroom Swiss, Soda', total: '₦9,200.00', status: 'DELIVERED', sColor: 'text-emerald-500', sBg: 'bg-emerald-900/30' },
     { id: '#ORD-88223', init: 'KO', name: 'Kola Okoro', date: 'Oct 24, 2023', time: '16:05 PM', items: 'Vegan Burger, Sweet Potato', total: '₦10,800.00', status: 'CANCELLED', sColor: 'text-neutral-400', sBg: 'bg-neutral-800/50' },
+    { id: '#ORD-88224', init: 'EM', name: 'Emilia Martinez', date: 'Oct 25, 2023', time: '09:15 AM', items: 'Grilled Chicken, Fries', total: '₦11,500.00', status: 'DELIVERED', sColor: 'text-emerald-500', sBg: 'bg-emerald-900/30' },
+    { id: '#ORD-88225', init: 'DR', name: 'David Ross', date: 'Oct 25, 2023', time: '11:30 AM', items: 'Buffalo Wings × 2', total: '₦7,800.00', status: 'PENDING', sColor: 'text-orange-500', sBg: 'bg-orange-900/30' },
+    { id: '#ORD-88226', init: 'NK', name: 'Nkechi Kalu', date: 'Oct 25, 2023', time: '13:45 PM', items: 'Signature Wagyu, Drink', total: '₦14,200.00', status: 'ON ROUTE', sColor: 'text-blue-500', sBg: 'bg-blue-900/30' },
+    { id: '#ORD-88227', init: 'JW', name: 'James Wright', date: 'Oct 25, 2023', time: '16:20 PM', items: 'Combo Meal × 2', total: '₦18,500.00', status: 'DELIVERED', sColor: 'text-emerald-500', sBg: 'bg-emerald-900/30' },
+    { id: '#ORD-88228', init: 'LC', name: 'Lisa Chen', date: 'Oct 26, 2023', time: '10:05 AM', items: 'Vegetarian Burger', total: '₦6,500.00', status: 'CANCELLED', sColor: 'text-neutral-400', sBg: 'bg-neutral-800/50' },
+    { id: '#ORD-88229', init: 'PC', name: 'Peter Chisom', date: 'Oct 26, 2023', time: '14:30 PM', items: 'Double Burger, Drink × 3', total: '₦13,900.00', status: 'PENDING', sColor: 'text-orange-500', sBg: 'bg-orange-900/30' },
+    { id: '#ORD-88230', init: 'AB', name: 'Aisha Bello', date: 'Oct 26, 2023', time: '15:45 PM', items: 'Truffle Fries, Burger', total: '₦9,800.00', status: 'DELIVERED', sColor: 'text-emerald-500', sBg: 'bg-emerald-900/30' },
   ];
+
+  const totalPages = Math.ceil(allOrders.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const currentOrders = allOrders.slice(startIdx, startIdx + itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('...');
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+        if (!pages.includes(i)) pages.push(i);
+      }
+      if (currentPage < totalPages - 2) pages.push('...');
+      pages.push(totalPages);
+    }
+    return pages;
+  };
 
   return (
     <div className="flex flex-col h-full bg-[#0a0a0a] text-white p-6 space-y-6">
@@ -523,8 +685,8 @@ const OrdersTab = () => {
             </tr>
           </thead>
           <tbody className="text-sm">
-            {orders.map((order, i) => (
-              <tr key={i} className="border-b border-neutral-800/50 hover:bg-neutral-800/10 transition-colors group">
+            {currentOrders.map((order) => (
+              <tr key={order.id} className="border-b border-neutral-800/50 hover:bg-neutral-800/10 transition-colors group">
                 <td className="py-4 px-6 font-medium text-neutral-200">{order.id}</td>
                 <td className="py-4 px-4 flex items-center gap-3">
                   <div className="w-8 h-8 bg-[#2a2a2a] text-[#e59850] font-bold text-xs rounded flex items-center justify-center">
@@ -558,29 +720,41 @@ const OrdersTab = () => {
       {/* Pagination */}
       <div className="flex justify-between items-center pt-2">
         <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
-          Showing 1 to 5 of 1,248 orders
+          Showing {startIdx + 1} to {Math.min(startIdx + itemsPerPage, allOrders.length)} of {allOrders.length} orders
         </div>
         
         <div className="flex items-center gap-1">
-          <button className="w-8 h-8 flex items-center justify-center rounded bg-transparent border border-neutral-800/60 text-neutral-500 hover:text-white hover:border-neutral-600 transition-colors">
+          <button 
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="w-8 h-8 flex items-center justify-center rounded bg-transparent border border-neutral-800/60 text-neutral-500 hover:text-white hover:border-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <ChevronLeft size={14} />
           </button>
-          <button className="w-8 h-8 flex items-center justify-center rounded bg-[#e88836] text-black font-semibold text-xs transition-colors">
-            1
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center rounded bg-transparent border border-neutral-800/60 text-neutral-400 hover:text-white hover:border-neutral-600 transition-colors text-xs font-medium">
-            2
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center rounded bg-transparent border border-neutral-800/60 text-neutral-400 hover:text-white hover:border-neutral-600 transition-colors text-xs font-medium">
-            3
-          </button>
-          <div className="w-8 h-8 flex items-center justify-center text-neutral-500 text-xs font-medium tracking-widest">
-            ...
-          </div>
-          <button className="w-8 h-8 flex items-center justify-center rounded bg-transparent border border-neutral-800/60 text-neutral-400 hover:text-white hover:border-neutral-600 transition-colors text-xs font-medium">
-            24
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center rounded bg-transparent border border-neutral-800/60 text-neutral-500 hover:text-white hover:border-neutral-600 transition-colors">
+          {getPageNumbers().map((page, idx) => (
+            page === '...' ? (
+              <div key={`dots-${idx}`} className="w-8 h-8 flex items-center justify-center text-neutral-500 text-xs font-medium tracking-widest">
+                ...
+              </div>
+            ) : (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`w-8 h-8 flex items-center justify-center rounded text-xs font-medium transition-colors ${
+                  currentPage === page
+                    ? 'bg-[#e88836] text-black'
+                    : 'bg-transparent border border-neutral-800/60 text-neutral-400 hover:text-white hover:border-neutral-600'
+                }`}
+              >
+                {page}
+              </button>
+            )
+          ))}
+          <button 
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="w-8 h-8 flex items-center justify-center rounded bg-transparent border border-neutral-800/60 text-neutral-500 hover:text-white hover:border-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <ChevronRight size={14} />
           </button>
         </div>
@@ -588,8 +762,6 @@ const OrdersTab = () => {
     </div>
   );
 };
-
-
 
 const ReviewsTab = () => {
   return (
@@ -671,12 +843,49 @@ const ReviewsTab = () => {
   );
 };
 
-
-
 const TransactionsTab = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
+
+  const allTransactions = [
+    ...Array(27).fill(null).map((_, i) => ({
+      id: `Order-${3567 + i}`,
+      ref: `trf-Order-${3567 + i}-hjsdikjbruiqnkdnk`,
+      customer: 'JOHN DOE',
+      status: 'SUCCESS',
+      amount: `₦ ${1000 + (i * 150)}.00`,
+      type: 'Credit',
+      date: `13:00PM | 02/${String((i % 30) + 1).padStart(2, '0')}/2026`
+    }))
+  ];
+
+  const totalPages = Math.ceil(allTransactions.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const currentTransactions = allTransactions.slice(startIdx, startIdx + itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('...');
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+        if (!pages.includes(i)) pages.push(i);
+      }
+      if (currentPage < totalPages - 2) pages.push('...');
+      pages.push(totalPages);
+    }
+    return pages;
+  };
+
   return (
     <div className="w-full bg-[#0a0a0a] text-white font-sans p-6">
-      <div className="w-full max-w-6xl mx-auto">
+      <div className="w-full max-w-6xl mx-auto space-y-6">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-neutral-800/80 text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
@@ -689,71 +898,79 @@ const TransactionsTab = () => {
             </tr>
           </thead>
           <tbody className="text-sm">
-            {[...Array(7)].map((_, i) => (
+            {currentTransactions.map((transaction, i) => (
               <tr 
                 key={i} 
                 className="border-b border-neutral-800/50 hover:bg-neutral-800/20 transition-colors"
               >
                 <td className="py-4 px-2">
-                  <div className="font-bold text-white text-[13px]">Order-3567</div>
-                  <div className="text-[11px] text-neutral-500 mt-0.5">trf-Order-3567-hjsdikjbruiqnkdnk</div>
+                  <div className="font-bold text-white text-[13px]">{transaction.id}</div>
+                  <div className="text-[11px] text-neutral-500 mt-0.5">{transaction.ref}</div>
                 </td>
                 <td className="py-4 px-2 text-[13px] font-bold text-white tracking-wide">
-                  JOHN DOE
+                  {transaction.customer}
                 </td>
                 <td className="py-4 px-2">
                   <span className="px-2 py-1 text-[9px] font-bold bg-[#022c16] text-[#10b981] rounded tracking-wider">
-                    SUCCESS
+                    {transaction.status}
                   </span>
                 </td>
                 <td className="py-4 px-2 text-[13px] font-bold text-white">
-                  ₦ 1,000.00
+                  {transaction.amount}
                 </td>
                 <td className="py-4 px-2 text-[13px] text-white font-medium">
-                  Credit
+                  {transaction.type}
                 </td>
                 <td className="py-4 px-2 text-neutral-400 text-[11px] font-medium tracking-wide">
-                  13:00PM | 02/03/2026
+                  {transaction.date}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        <Pagination label="Showing 1-5 of 132 transactions" />
+        {/* Pagination */}
+        <div className="flex justify-between items-center text-[11px] font-medium text-neutral-500 py-4 px-2">
+          <span>Showing {startIdx + 1}-{Math.min(startIdx + itemsPerPage, allTransactions.length)} of {allTransactions.length} transactions</span>
+          <div className="flex items-center gap-1">
+            <button 
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="w-6 h-6 flex items-center justify-center rounded hover:bg-neutral-800 text-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft size={14} />
+            </button>
+            {getPageNumbers().map((page, idx) => (
+              page === '...' ? (
+                <div key={`dots-${idx}`} className="w-6 h-6 flex items-center justify-center text-neutral-600 tracking-widest text-xs">
+                  ...
+                </div>
+              ) : (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`w-6 h-6 flex items-center justify-center rounded text-xs font-bold transition-colors ${
+                    currentPage === page
+                      ? 'bg-[#f97316] text-black'
+                      : 'hover:bg-neutral-800 text-neutral-400'
+                  }`}
+                >
+                  {page}
+                </button>
+              )
+            ))}
+            <button 
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="w-6 h-6 flex items-center justify-center rounded hover:bg-neutral-800 text-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
-
-// Generic Pagination Component
-const Pagination = ({ label }) => (
-  <div className="flex justify-between items-center text-[11px] font-medium text-neutral-500 py-6 px-2">
-    <span>{label}</span>
-    <div className="flex items-center gap-1">
-      <button className="w-6 h-6 flex items-center justify-center rounded hover:bg-neutral-800 text-neutral-600 transition-colors">
-        <ChevronLeft size={14} />
-      </button>
-      <button className="w-6 h-6 flex items-center justify-center rounded bg-[#f97316] text-black font-bold">
-        1
-      </button>
-      <button className="w-6 h-6 flex items-center justify-center rounded hover:bg-neutral-800 text-neutral-400 transition-colors">
-        2
-      </button>
-      <button className="w-6 h-6 flex items-center justify-center rounded hover:bg-neutral-800 text-neutral-400 transition-colors">
-        3
-      </button>
-      <span className="px-1 text-neutral-600 tracking-widest">...</span>
-      <button className="w-6 h-6 flex items-center justify-center rounded hover:bg-neutral-800 text-neutral-400 transition-colors">
-        27
-      </button>
-      <button className="w-6 h-6 flex items-center justify-center rounded hover:bg-neutral-800 text-neutral-600 transition-colors">
-        <ChevronRight size={14} />
-      </button>
-    </div>
-  </div>
-);
-
-
 
 export default VendorOverview;

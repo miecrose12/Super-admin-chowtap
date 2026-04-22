@@ -1,25 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// Utility to generate mock data for testing pagination
+const generateMockVendors = (count) => {
+  const statuses = ['ACTIVE', 'SUSPENDED', 'PENDING'];
+  return Array.from({ length: count }, (_, i) => ({
+    id: i + 1,
+    name: `BROS JOHN ${i + 1}`,
+    avatar: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=64&h=64&fit=crop',
+    email: `brosjohn${i + 1}@gmail.com`,
+    rating: (Math.random() * (5 - 3) + 3).toFixed(1),
+    campus: 'MCPHERSON UNIVERSITY',
+    status: statuses[i % statuses.length],
+    revenue: `N ${(Math.random() * 2000000).toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+    orders: Math.floor(Math.random() * 2000).toLocaleString(),
+    date: '12 February, 2026'
+  }));
+};
 
 const VendorManagement = () => {
   const navigate = useNavigate();
 
-  // Mock data matching the screenshot
-  const initialVendors = [
-    { id: 1, name: 'BROS JOHN', avatar: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=64&h=64&fit=crop', email: 'brosjohn@gmail.com', rating: 4.9, campus: 'MCPHERSON UNIVERSITY', status: 'ACTIVE', revenue: 'N 1,789,000.00', orders: '1,879', date: '12 February, 2026' },
-    { id: 2, name: 'BROS JOHN', avatar: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=64&h=64&fit=crop', email: 'brosjohn@gmail.com', rating: 4.9, campus: 'MCPHERSON UNIVERSITY', status: 'ACTIVE', revenue: 'N 1,789,000.00', orders: '1,879', date: '12 February, 2026' },
-    { id: 3, name: 'BROS JOHN', avatar: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=64&h=64&fit=crop', email: 'brosjohn@gmail.com', rating: 4.9, campus: 'MCPHERSON UNIVERSITY', status: 'SUSPENDED', revenue: 'N 1,789,000.00', orders: '1,879', date: '12 February, 2026' },
-    { id: 4, name: 'BROS JOHN', avatar: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=64&h=64&fit=crop', email: 'brosjohn@gmail.com', rating: 4.9, campus: 'MCPHERSON UNIVERSITY', status: 'PENDING', revenue: 'N 1,789,000.00', orders: '1,879', date: '12 February, 2026' },
-    { id: 5, name: 'BROS JOHN', avatar: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=64&h=64&fit=crop', email: 'brosjohn@gmail.com', rating: 4.9, campus: 'MCPHERSON UNIVERSITY', status: 'ACTIVE', revenue: 'N 1,789,000.00', orders: '1,879', date: '12 February, 2026' },
-  ];
+  // --- PAGINATION STATE ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+  const allVendors = useMemo(() => generateMockVendors(132), []);
 
-  // CHANGED: Initialize with an empty array so nothing is selected on page load
+  // --- SELECTION STATE ---
   const [selectedIds, setSelectedIds] = useState([]);
 
+  // --- PAGINATION CALCULATIONS ---
+  const totalPages = Math.ceil(allVendors.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentVendors = allVendors.slice(indexOfFirstItem, indexOfLastItem);
+
+  // --- HANDLERS ---
   const toggleSelectOne = (id) => {
     setSelectedIds(prev => 
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     );
+  };
+
+  const toggleSelectAll = () => {
+    const currentIds = currentVendors.map(v => v.id);
+    const allSelectedOnPage = currentIds.every(id => selectedIds.includes(id));
+    
+    if (allSelectedOnPage) {
+      setSelectedIds(prev => prev.filter(id => !currentIds.includes(id)));
+    } else {
+      setSelectedIds(prev => [...new Set([...prev, ...currentIds])]);
+    }
   };
 
   const handleRowClick = () => {
@@ -39,17 +70,47 @@ const VendorManagement = () => {
     );
   };
 
+  // Helper to render page numbers with logic
+  const renderPaginationButtons = () => {
+    const pages = [];
+    const showEllipsis = totalPages > 5;
+
+    if (!showEllipsis) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      // Always show first, last, and current +/- 1
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, 4, '...', totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+      }
+    }
+
+    return pages.map((p, i) => (
+      p === '...' ? (
+        <span key={`sep-${i}`} className="text-gray-600 px-1 text-xs tracking-widest">...</span>
+      ) : (
+        <button
+          key={p}
+          onClick={() => setCurrentPage(p)}
+          className={`w-7 h-7 flex items-center justify-center font-bold rounded-[4px] text-xs transition-colors ${
+            currentPage === p ? 'bg-[#F28C28] text-black' : 'text-gray-400 hover:bg-[#1A1A1A]'
+          }`}
+        >
+          {p}
+        </button>
+      )
+    ));
+  };
+
   return (
     <div className="min-h-screen bg-[#0e0e0e] text-white p-8 font-sans">
-      {/* Header Section */}
-      <h1 className="text-[28px] font-bold mb-6">
-        Vendor Management
-      </h1>
+      <h1 className="text-[28px] font-bold mb-6">Vendor Management</h1>
 
       {/* Analytics Cards */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-8">
-        
-        {/* Total Revenue Card */}
         <div className="xl:col-span-2 bg-[#1A1A1A] rounded-xl p-8 flex justify-between items-center shadow-lg border border-transparent">
           <div>
             <p className="text-[11px] text-gray-500 font-bold tracking-[0.15em] mb-3 uppercase">Total Vendors Revenue</p>
@@ -59,7 +120,6 @@ const VendorManagement = () => {
               <span className="text-gray-500 ml-1">from last month</span>
             </p>
           </div>
-          
           <div className="flex items-center space-x-8 pr-4">
             <div className="flex items-center gap-3">
               <div className="flex flex-col text-[10px] text-gray-500 font-bold tracking-widest leading-tight">
@@ -68,9 +128,7 @@ const VendorManagement = () => {
               </div>
               <span className="text-3xl font-bold">132</span>
             </div>
-            
             <div className="h-10 w-[1px] bg-[#333333]"></div>
-            
             <div className="flex items-center gap-3">
               <div className="flex flex-col text-[10px] text-gray-500 font-bold tracking-widest leading-tight">
                 <span>PENDING</span>
@@ -81,13 +139,7 @@ const VendorManagement = () => {
           </div>
         </div>
 
-        {/* Action Required Card */}
         <div className="bg-[#1A1A1A] rounded-xl p-8 relative overflow-hidden flex flex-col justify-center shadow-lg">
-          {/* Subtle Shield Background Icon */}
-          <svg className="absolute -right-4 -bottom-4 w-32 h-32 text-white opacity-[0.02]" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-          </svg>
-          
           <div className="relative z-10">
             <p className="text-[11px] text-[#F28C28] font-bold tracking-[0.15em] mb-2 uppercase">Action Required</p>
             <h3 className="text-xl font-bold mb-2">3 Pending Approvals</h3>
@@ -110,7 +162,7 @@ const VendorManagement = () => {
           <input 
             type="text" 
             placeholder="Search by merchant name..." 
-            className="w-[320px] bg-[#0A0A0A] border border-[#000] text-white text-sm rounded-md pl-11 pr-4 py-2.5 focus:outline-none focus:border-[#52525B]-600 placeholder-[#52525B]-600"
+            className="w-[320px] bg-[#0A0A0A] border border-[#000] text-white text-sm rounded-md pl-11 pr-4 py-2.5 focus:outline-none focus:border-gray-600 placeholder-gray-600"
           />
         </div>
         <button className="flex items-center space-x-2 bg-[#1A1A1A] hover:bg-[#222222] text-white text-sm px-4 py-2.5 rounded-md border border-gray-800 transition-colors">
@@ -122,11 +174,26 @@ const VendorManagement = () => {
       </div>
 
       {/* Table Area */}
-      <div className="bg-[#0A0A0A] border-t border-gray-800/80">
+      <div className="bg-[#0A0A0A] border-t border-gray-800/80 min-h-[500px] flex flex-col justify-between">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-[#141414] text-[10px] text-gray-400 tracking-[0.1em] uppercase font-bold">
-              <th className="py-4 px-5 w-12 border-b border-gray-800"></th>
+              <th className="py-4 px-5 w-12 border-b border-gray-800">
+                <div 
+                  onClick={toggleSelectAll}
+                  className={`w-[14px] h-[14px] rounded-[3px] border-[1.5px] cursor-pointer flex items-center justify-center transition-all ${
+                    currentVendors.length > 0 && currentVendors.every(v => selectedIds.includes(v.id))
+                      ? 'bg-[#F28C28] border-[#F28C28]' 
+                      : 'border-gray-600 hover:border-[#F28C28]'
+                  }`}
+                >
+                   {(currentVendors.length > 0 && currentVendors.every(v => selectedIds.includes(v.id))) && (
+                    <svg className="w-2.5 h-2.5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+              </th>
               <th className="py-4 px-4 border-b border-gray-800">Merchant Name</th>
               <th className="py-4 px-4 border-b border-gray-800">Campus</th>
               <th className="py-4 px-4 border-b border-gray-800">Status</th>
@@ -137,7 +204,7 @@ const VendorManagement = () => {
             </tr>
           </thead>
           <tbody className="text-sm">
-            {initialVendors.map((vendor) => {
+            {currentVendors.map((vendor) => {
               const isSelected = selectedIds.includes(vendor.id);
               return (
                 <tr 
@@ -152,9 +219,7 @@ const VendorManagement = () => {
                         toggleSelectOne(vendor.id);
                       }}
                       className={`w-[14px] h-[14px] rounded-[3px] border-[1.5px] cursor-pointer flex items-center justify-center transition-all ${
-                        isSelected 
-                          ? 'bg-[#F28C28] border-[#F28C28]' 
-                          : 'border-[#F28C28] hover:border-[#E07A1A]'
+                        isSelected ? 'bg-[#F28C28] border-[#F28C28]' : 'border-[#F28C28]'
                       }`}
                     >
                       {isSelected && (
@@ -189,13 +254,7 @@ const VendorManagement = () => {
                     {vendor.date}
                   </td>
                   <td className="py-3 px-5 text-right">
-                    {/* Padlock Icon */}
-                    <svg 
-                      onClick={(e) => e.stopPropagation()} 
-                      className="w-4 h-4 text-[#F28C28] cursor-pointer hover:opacity-80 transition-opacity" 
-                      fill="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-4 h-4 text-[#F28C28]" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M18 10v-4c0-3.313-2.687-6-6-6s-6 2.687-6 6v4h-3v14h18v-14h-3zm-10-4c0-2.206 1.794-4 4-4s4 1.794 4 4v4h-8v-4zm4 11.5c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5 1.5.672 1.5 1.5-.672 1.5-1.5 1.5z"/>
                     </svg>
                   </td>
@@ -205,21 +264,29 @@ const VendorManagement = () => {
           </tbody>
         </table>
 
-        {/* Footer / Pagination */}
-        <div className="flex justify-between items-center py-4 px-2 mt-2">
-          <p className="text-[12px] text-gray-500 font-medium">Showing 1-5 of 132 vendors</p>
+        {/* --- FOOTER / PAGINATION --- */}
+        <div className="flex justify-between items-center py-6 px-2">
+          <p className="text-[12px] text-gray-500 font-medium">
+            Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, allVendors.length)} of {allVendors.length} vendors
+          </p>
           <div className="flex items-center space-x-1">
-            <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-white transition-colors">
+            <button 
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(p => p - 1)}
+              className={`w-8 h-8 flex items-center justify-center transition-colors ${currentPage === 1 ? 'text-gray-800 cursor-not-allowed' : 'text-gray-600 hover:text-white'}`}
+            >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <button className="w-7 h-7 flex items-center justify-center bg-[#F28C28] text-black font-bold rounded-[4px] text-xs">1</button>
-            <button className="w-7 h-7 flex items-center justify-center text-gray-400 hover:bg-[#1A1A1A] rounded-[4px] text-xs transition-colors">2</button>
-            <button className="w-7 h-7 flex items-center justify-center text-gray-400 hover:bg-[#1A1A1A] rounded-[4px] text-xs transition-colors">3</button>
-            <span className="text-gray-600 px-1 text-xs tracking-widest">...</span>
-            <button className="w-7 h-7 flex items-center justify-center text-gray-400 hover:bg-[#1A1A1A] rounded-[4px] text-xs transition-colors">27</button>
-            <button className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-white transition-colors">
+            
+            {renderPaginationButtons()}
+
+            <button 
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(p => p + 1)}
+              className={`w-8 h-8 flex items-center justify-center transition-colors ${currentPage === totalPages ? 'text-gray-800 cursor-not-allowed' : 'text-gray-500 hover:text-white'}`}
+            >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
               </svg>
@@ -231,4 +298,4 @@ const VendorManagement = () => {
   );
 };
 
-export default VendorManagement;
+export default VendorManagement; 

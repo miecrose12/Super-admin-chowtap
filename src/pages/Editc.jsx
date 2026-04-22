@@ -18,7 +18,7 @@ const Editc = () => {
       <div className="max-w-5xl mx-auto flex justify-between items-start mb-8">
         <div className="flex gap-4 items-start">
        <Link to="/users/edit">
-  <button className="p-2 border border-zinc-700/50 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 mt-1">
+  <button className="p-4 border border-[#DC781B] hover:bg-zinc-800 rounded-lg transition-colors text-[#ffffff] mt-1">
     <ArrowLeft className="w-5 h-5" />
   </button>
 </Link>
@@ -147,7 +147,7 @@ const Editc = () => {
           <button className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">
             Cancel
           </button>
-          <button className="bg-[#E0792A] hover:bg-[#C96920] text-black font-semibold text-sm px-6 py-2.5 rounded-lg transition-colors shadow-lg shadow-[#E0792A]/10">
+          <button className="bg-[#DC781B] hover:bg-[#C96920] text-black font-semibold text-sm px-6 py-2.5 rounded-lg transition-colors shadow-lg shadow-[#E0792A]/10">
             Update Profile
           </button>
         </div>

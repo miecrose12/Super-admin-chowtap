@@ -3,6 +3,154 @@ import { Link } from 'react-router-dom';
 
 const CustomerProfile = () => {
   const [activeTab, setActiveTab] = useState('favorites');
+  const [orderHistoryPage, setOrderHistoryPage] = useState(1);
+  const [voucherHistoryPage, setVoucherHistoryPage] = useState(1);
+  
+  // Pagination config
+  const ITEMS_PER_PAGE = 5;
+  const TOTAL_ORDERS = 142;
+  const TOTAL_VOUCHERS = 142;
+  const TOTAL_ORDER_PAGES = Math.ceil(TOTAL_ORDERS / ITEMS_PER_PAGE);
+  const TOTAL_VOUCHER_PAGES = Math.ceil(TOTAL_VOUCHERS / ITEMS_PER_PAGE);
+
+  // Sample order history data - in real app this would come from API
+  const allOrdersData = [
+    { id: '#Order-4567', date: 'Oct 24, 2023 • 18:42', vendor: 'Taco Bell - Downtown', total: 'N2,580.00', status: 'DELIVERED', rating: 5, review: '"Food arrived pipin..."' },
+    { id: '#Order-4566', date: 'Oct 23, 2023 • 15:30', vendor: 'Pizza Hut - Ikoyi', total: 'N3,150.00', status: 'DELIVERED', rating: 5, review: '"Excellent quality!"' },
+    { id: '#Order-8903', date: 'Oct 20, 2023 • 20:10', vendor: 'Burger King', total: 'N2,580.00', status: 'REFUNDED', rating: 0, review: 'No review provided' },
+    { id: '#Order-5674', date: 'Oct 18, 2023 • 19:15', vendor: 'The Pasta House', total: 'N2,580.00', status: 'PROCESSING', rating: 0, review: 'Order in progress' },
+    { id: '#Order-2891', date: 'Oct 17, 2023 • 14:20', vendor: 'KFC Express', total: 'N1,950.00', status: 'DELIVERED', rating: 4, review: '"Good value for money"' },
+    { id: '#Order-7542', date: 'Oct 16, 2023 • 12:45', vendor: 'Subway - V.I', total: 'N1,200.00', status: 'DELIVERED', rating: 5, review: '"Fresh ingredients!"' },
+    { id: '#Order-3298', date: 'Oct 15, 2023 • 18:00', vendor: 'Chicken Republic', total: 'N2,100.00', status: 'DELIVERED', rating: 4, review: '"Quick delivery"' },
+    { id: '#Order-9145', date: 'Oct 14, 2023 • 16:30', vendor: 'Mr. Bigg\'s', total: 'N2,800.00', status: 'DELIVERED', rating: 5, review: '"Perfect meal!"' },
+    { id: '#Order-4829', date: 'Oct 13, 2023 • 11:10', vendor: 'Domino\'s Pizza', total: 'N3,500.00', status: 'DELIVERED', rating: 4, review: '"Hot and fresh"' },
+    { id: '#Order-6713', date: 'Oct 12, 2023 • 13:25', vendor: 'Buffalo Wings', total: 'N1,850.00', status: 'DELIVERED', rating: 5, review: '"Spicy and tasty!"' },
+  ];
+
+  // Sample voucher history data
+  const allVouchersData = [
+    { type: 'Debit', date: 'Oct 24, 2023 • 18:42', name: '#Order-5674 - Voucher', amount: 'N2,580.00', status: 'SUCCESS', reference: 'trf-Order-5768-785788949' },
+    { type: 'Credit', date: 'Oct 24, 2023 • 18:42', name: 'VoucherPurchase', amount: 'N2,580.00', status: 'SUCCESS', reference: 'trf-Order-5768-785788949' },
+    { type: 'Debit', date: 'Oct 20, 2023 • 20:10', name: 'Gift Received', amount: 'N2,580.00', status: 'FAILED', reference: 'trf-Order-5768-785788949' },
+    { type: 'Credit', date: 'Oct 18, 2023 • 19:15', name: 'Student', amount: 'N2,580.00', status: 'PENDING', reference: 'trf-Order-5768-785788949' },
+    { type: 'Credit', date: 'Oct 18, 2023 • 19:15', name: 'Student', amount: 'N2,580.00', status: 'PENDING', reference: 'trf-Order-5768-785788949' },
+    { type: 'Debit', date: 'Oct 17, 2023 • 10:30', name: '#Order-1234 - Voucher', amount: 'N1,500.00', status: 'SUCCESS', reference: 'trf-Order-1234-856789012' },
+    { type: 'Credit', date: 'Oct 16, 2023 • 14:15', name: 'Referral Bonus', amount: 'N500.00', status: 'SUCCESS', reference: 'trf-Order-5678-923456789' },
+    { type: 'Debit', date: 'Oct 15, 2023 • 09:45', name: '#Order-9876 - Voucher', amount: 'N3,200.00', status: 'SUCCESS', reference: 'trf-Order-9876-567890123' },
+    { type: 'Credit', date: 'Oct 14, 2023 • 16:20', name: 'Birthday Bonus', amount: 'N1,000.00', status: 'SUCCESS', reference: 'trf-Order-5432-234567890' },
+    { type: 'Debit', date: 'Oct 13, 2023 • 12:00', name: '#Order-5555 - Voucher', amount: 'N2,100.00', status: 'SUCCESS', reference: 'trf-Order-5555-345678901' },
+  ];
+
+  // Paginate order history
+  const paginatedOrders = allOrdersData.slice(
+    (orderHistoryPage - 1) * ITEMS_PER_PAGE,
+    orderHistoryPage * ITEMS_PER_PAGE
+  );
+
+  // Paginate voucher history
+  const paginatedVouchers = allVouchersData.slice(
+    (voucherHistoryPage - 1) * ITEMS_PER_PAGE,
+    voucherHistoryPage * ITEMS_PER_PAGE
+  );
+
+  // Helper function to generate page numbers for pagination display
+  const generatePageNumbers = (currentPage, totalPages) => {
+    const pages = [];
+    const maxVisible = 5; // Show max 5 page buttons
+    
+    if (totalPages <= maxVisible) {
+      // Show all pages if total is less than max visible
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+      
+      // Calculate middle pages
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+      
+      if (currentPage <= 2) {
+        endPage = 4;
+      } else if (currentPage >= totalPages - 1) {
+        startPage = totalPages - 3;
+      }
+      
+      // Add ellipsis if needed
+      if (startPage > 2) {
+        pages.push('...');
+      }
+      
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+      
+      // Add ellipsis if needed
+      if (endPage < totalPages - 1) {
+        pages.push('...');
+      }
+      
+      // Always show last page
+      pages.push(totalPages);
+    }
+    
+    return pages;
+  };
+
+  // Render stars for order review
+  const renderStars = (count) => {
+    return (
+      <div className="flex text-[#FFB782]">
+        {[...Array(5)].map((_, i) => (
+          <svg
+            key={i}
+            className={`w-3.5 h-3.5 ${i < count ? 'fill-current' : 'text-neutral-600 fill-current'}`}
+            viewBox="0 0 20 20"
+          >
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        ))}
+      </div>
+    );
+  };
+
+  // Get status color and styling
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case 'DELIVERED':
+        return 'bg-[#0a2717] text-[#10b981]';
+      case 'REFUNDED':
+        return 'bg-[#2c0e0e] text-[#ef4444]';
+      case 'PROCESSING':
+        return 'bg-[#2b1708] text-[#FFB782]';
+      case 'SUCCESS':
+        return 'text-[#22c55e]';
+      case 'FAILED':
+        return 'text-[#ef4444]';
+      case 'PENDING':
+        return 'text-[#FFB782]';
+      default:
+        return 'bg-[#1a1a1a] text-neutral-400';
+    }
+  };
+
+  const getStatusDot = (status) => {
+    switch (status) {
+      case 'DELIVERED':
+      case 'SUCCESS':
+        return 'bg-[#10b981]';
+      case 'REFUNDED':
+      case 'FAILED':
+        return 'bg-[#ef4444]';
+      case 'PROCESSING':
+      case 'PENDING':
+        return 'bg-[#FFB782]';
+      default:
+        return 'bg-neutral-500';
+    }
+  };
 
   const Icon = ({ name, className }) => {
     switch (name) {
@@ -96,16 +244,6 @@ const CustomerProfile = () => {
     }
   };
 
-  const renderStars = (count) => {
-    return (
-      <div className="flex text-[#FF8A00] gap-0.5">
-        {[...Array(5)].map((_, i) => (
-          <Icon key={i} name="star" className={`w-3 h-3 ${i < count ? 'text-[#e86b35]' : 'text-neutral-600'}`} />
-        ))}
-      </div>
-    );
-  };
-
   const wishlistItems = [
     { name: 'Jollof Rice', price: 'N200.00', vendor: 'Abula Spot' },
     { name: 'Jollof Rice', price: 'N200.00', vendor: 'Abula Spot' },
@@ -158,7 +296,7 @@ const CustomerProfile = () => {
               Edit Customer
             </Link>
 
-            <button className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-[#4a1c1c] hover:bg-[#5a2020] text-[#ff6b6b] px-4 py-2.5 rounded-lg text-sm font-medium transition-colors border border-[#6a2020]">
+            <button className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-[#7E2B17] hover:bg-[#5a2020] text-[#ff6b6b] px-4 py-2.5 rounded-lg text-sm font-medium transition-colors border border-[#6a2020]">
               <Icon name="suspend" className="w-4 h-4" />
               Suspend User
             </button>
@@ -199,7 +337,12 @@ const CustomerProfile = () => {
           {['favorites', 'order-history', 'voucher-history'].map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => {
+                setActiveTab(tab);
+                // Reset pagination when switching tabs
+                if (tab === 'order-history') setOrderHistoryPage(1);
+                if (tab === 'voucher-history') setVoucherHistoryPage(1);
+              }}
               className={`pb-4 text-xs font-bold uppercase tracking-[0.1em] transition-colors relative top-[1px] ${
                 activeTab === tab
                   ? 'text-[#FFB782] border-b-2 border-[#FFB782]'
@@ -260,8 +403,8 @@ const CustomerProfile = () => {
           {/* Rank 1 */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[#1c1c1c] flex items-center justify-center border border-[#262626]">
-                <span className="text-[#dfa375] font-bold text-sm">1</span>
+              <div className="w-10 h-10 rounded-xl bg-[#131313] flex items-center justify-center border border-[#262626]">
+                <span className="text-[#FFA35B] font-bold text-sm">1</span>
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="text-[13px] font-medium text-white">Caramel Latte</span>
@@ -275,8 +418,8 @@ const CustomerProfile = () => {
           {/* Rank 2 */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[#1c1c1c] flex items-center justify-center border border-[#262626]">
-                <span className="text-[#dfa375] font-bold text-sm">2</span>
+              <div className="w-10 h-10 rounded-xl bg-[#131313] flex items-center justify-center border border-[#262626]">
+                <span className="text-[#FFA35B] font-bold text-sm">2</span>
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="text-[13px] font-medium text-white">Garlic Fries</span>
@@ -290,8 +433,8 @@ const CustomerProfile = () => {
           {/* Rank 3 */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[#1c1c1c] flex items-center justify-center border border-[#262626]">
-                <span className="text-[#dfa375] font-bold text-sm">3</span>
+              <div className="w-10 h-10 rounded-xl bg-[#131313] flex items-center justify-center border border-[#262626]">
+                <span className="text-[#FFA35B] font-bold text-sm">3</span>
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="text-[13px] font-medium text-white">Avocado Toast</span>
@@ -309,11 +452,11 @@ const CustomerProfile = () => {
         <h3 className="text-[10px] font-bold text-[#dfa375] tracking-[0.2em] uppercase mb-5">Top Vendors</h3>
         <div className="flex flex-col gap-3">
           {/* Vendor 1 */}
-          <div className="bg-[#1a1a1a] p-3 rounded-xl flex items-center justify-between border border-[#262626]">
+          <div className="bg-[#000000] p-3 rounded-xl flex items-center justify-between border border-[#262626]">
             <div className="flex items-center gap-3">
               <div className="w-[42px] h-[42px] rounded-lg bg-[#222] flex items-center justify-center border border-[#2a2a2a]">
                 {/* Coffee Icon */}
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#dfa375]"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#FFA35B]"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="text-[13px] font-medium text-white">Green Leaf Cafe</span>
@@ -328,11 +471,11 @@ const CustomerProfile = () => {
           </div>
 
           {/* Vendor 2 */}
-          <div className="bg-[#1a1a1a] p-3 rounded-xl flex items-center justify-between border border-[#262626]">
+          <div className="bg-[#000000] p-3 rounded-xl flex items-center justify-between border border-[#262626]">
             <div className="flex items-center gap-3">
               <div className="w-[42px] h-[42px] rounded-lg bg-[#222] flex items-center justify-center border border-[#2a2a2a]">
                 {/* Utensils Icon */}
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#dfa375]"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#FFA35B]"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path></svg>
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="text-[13px] font-medium text-white">Urban Bites</span>
@@ -408,102 +551,34 @@ const CustomerProfile = () => {
           </tr>
         </thead>
         <tbody className="bg-black">
-          {/* Row 1 */}
-          <tr className="hover:bg-[#0a0a0a] transition-colors group">
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">#Order-4567</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs text-neutral-400">Oct 24, 2023 • 18:42</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">Taco Bell - Downtown</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">N2,580.00</td>
-            <td className="px-6 py-5 whitespace-nowrap">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a2717] text-[10px] font-bold text-[#10b981] uppercase tracking-wider">
-                <span className="w-1.5 h-1.5 bg-[#10b981] rounded-full"></span>
-                DELIVERED
-              </span>
-            </td>
-            <td className="px-6 py-5 whitespace-nowrap">
-              <div className="flex items-center gap-3">
-                <div className="flex text-[#FFB782]">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <span className="text-[11px] text-neutral-500 italic">"Food arrived pipin..."</span>
-              </div>
-            </td>
-          </tr>
-
-          {/* Row 2 */}
-          <tr className="hover:bg-[#0a0a0a] transition-colors group">
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">#Order-4567</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs text-neutral-400">Oct 24, 2023 • 18:42</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">Taco Bell - Downtown</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">N2,580.00</td>
-            <td className="px-6 py-5 whitespace-nowrap">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a2717] text-[10px] font-bold text-[#10b981] uppercase tracking-wider">
-                <span className="w-1.5 h-1.5 bg-[#10b981] rounded-full"></span>
-                DELIVERED
-              </span>
-            </td>
-            <td className="px-6 py-5 whitespace-nowrap">
-              <div className="flex items-center gap-3">
-                <div className="flex text-[#FFB782]">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <span className="text-[11px] text-neutral-500 italic">"Food arrived pipin..."</span>
-              </div>
-            </td>
-          </tr>
-
-          {/* Row 3 */}
-          <tr className="hover:bg-[#0a0a0a] transition-colors group">
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">#Order-8903</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs text-neutral-400">Oct 20, 2023 • 20:10</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">Burger King</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">N2,580.00</td>
-            <td className="px-6 py-5 whitespace-nowrap">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#2c0e0e] text-[10px] font-bold text-[#ef4444] uppercase tracking-wider">
-                <span className="w-1.5 h-1.5 bg-[#ef4444] rounded-full"></span>
-                REFUNDED
-              </span>
-            </td>
-            <td className="px-6 py-5 whitespace-nowrap text-[11px] text-[#333] italic">No review provided</td>
-          </tr>
-
-          {/* Row 4 */}
-          <tr className="hover:bg-[#0a0a0a] transition-colors group">
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">#Order-5674</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs text-neutral-400">Oct 18, 2023 • 19:15</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">The Pasta House</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">N2,580.00</td>
-            <td className="px-6 py-5 whitespace-nowrap">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#2b1708] text-[10px] font-bold text-[#FFB782] uppercase tracking-wider">
-                <span className="w-1.5 h-1.5 bg-[#FFB782] rounded-full"></span>
-                PROCESSING
-              </span>
-            </td>
-            <td className="px-6 py-5 whitespace-nowrap text-[11px] text-[#333] italic">Order in progress</td>
-          </tr>
-
-          {/* Row 5 */}
-          <tr className="hover:bg-[#0a0a0a] transition-colors group">
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">#Order-5674</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs text-neutral-400">Oct 18, 2023 • 19:15</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">The Pasta House</td>
-            <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">N2,580.00</td>
-            <td className="px-6 py-5 whitespace-nowrap">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#2b1708] text-[10px] font-bold text-[#FFB782] uppercase tracking-wider">
-                <span className="w-1.5 h-1.5 bg-[#FFB782] rounded-full"></span>
-                PROCESSING
-              </span>
-            </td>
-            <td className="px-6 py-5 whitespace-nowrap text-[11px] text-[#333] italic">Order in progress</td>
-          </tr>
+          {paginatedOrders.map((order, idx) => (
+            <tr key={idx} className="hover:bg-[#0a0a0a] transition-colors group border-b border-[#1a1a1a]">
+              <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">{order.id}</td>
+              <td className="px-6 py-5 whitespace-nowrap text-xs text-neutral-400">{order.date}</td>
+              <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">{order.vendor}</td>
+              <td className="px-6 py-5 whitespace-nowrap text-xs font-semibold text-neutral-200">{order.total}</td>
+              <td className="px-6 py-5 whitespace-nowrap">
+                {['DELIVERED', 'REFUNDED', 'PROCESSING'].includes(order.status) ? (
+                  <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${getStatusStyle(order.status)}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${getStatusDot(order.status)}`}></span>
+                    {order.status}
+                  </span>
+                ) : (
+                  <span>{order.status}</span>
+                )}
+              </td>
+              <td className="px-6 py-5 whitespace-nowrap">
+                {order.rating > 0 ? (
+                  <div className="flex items-center gap-3">
+                    {renderStars(order.rating)}
+                    <span className="text-[11px] text-neutral-500 italic">{order.review}</span>
+                  </div>
+                ) : (
+                  <span className="text-[11px] text-[#333] italic">{order.review}</span>
+                )}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
@@ -511,16 +586,53 @@ const CustomerProfile = () => {
     {/* Pagination */}
     <div className="flex items-center justify-between mt-8">
       <span className="text-xs text-neutral-500 tracking-wide">
-        Showing <span className="font-semibold text-neutral-300">1-5</span> of <span className="font-semibold text-neutral-300">142</span> orders
+        Showing <span className="font-semibold text-neutral-300">{(orderHistoryPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(orderHistoryPage * ITEMS_PER_PAGE, TOTAL_ORDERS)}</span> of <span className="font-semibold text-neutral-300">{TOTAL_ORDERS}</span> orders
       </span>
       <div className="flex items-center gap-1.5">
-        <button className="w-8 h-8 flex items-center justify-center rounded bg-[#111] text-neutral-500 border border-[#1a1a1a] hover:bg-[#1a1a1a] transition-colors text-xs font-medium">&lt;</button>
-        <button className="w-8 h-8 flex items-center justify-center rounded bg-[#e87b35] text-black font-bold text-xs">1</button>
-        <button className="w-8 h-8 flex items-center justify-center rounded bg-[#111] text-neutral-400 border border-[#1a1a1a] hover:bg-[#1a1a1a] transition-colors text-xs font-medium">2</button>
-        <button className="w-8 h-8 flex items-center justify-center rounded bg-[#111] text-neutral-400 border border-[#1a1a1a] hover:bg-[#1a1a1a] transition-colors text-xs font-medium">3</button>
-        <span className="w-8 h-8 flex items-center justify-center text-neutral-600 text-xs tracking-widest">...</span>
-        <button className="w-8 h-8 flex items-center justify-center rounded bg-[#111] text-neutral-400 border border-[#1a1a1a] hover:bg-[#1a1a1a] transition-colors text-xs font-medium">29</button>
-        <button className="w-8 h-8 flex items-center justify-center rounded bg-[#111] text-neutral-500 border border-[#1a1a1a] hover:bg-[#1a1a1a] transition-colors text-xs font-medium">&gt;</button>
+        {/* Previous Button */}
+        <button 
+          onClick={() => setOrderHistoryPage(prev => Math.max(1, prev - 1))}
+          disabled={orderHistoryPage === 1}
+          className={`w-8 h-8 flex items-center justify-center rounded transition-colors ${
+            orderHistoryPage === 1
+              ? 'bg-[#0a0a0a] text-neutral-700 border border-[#1a1a1a] cursor-not-allowed'
+              : 'bg-[#111] text-neutral-500 border border-[#1a1a1a] hover:bg-[#1a1a1a]'
+          }`}
+        >
+          &lt;
+        </button>
+
+        {/* Page Numbers */}
+        {generatePageNumbers(orderHistoryPage, TOTAL_ORDER_PAGES).map((page, idx) => (
+          page === '...' ? (
+            <span key={`ellipsis-${idx}`} className="w-8 h-8 flex items-center justify-center text-neutral-600 text-xs tracking-widest">...</span>
+          ) : (
+            <button
+              key={page}
+              onClick={() => setOrderHistoryPage(page)}
+              className={`w-8 h-8 flex items-center justify-center rounded transition-colors text-xs font-medium ${
+                orderHistoryPage === page
+                  ? 'bg-[#e87b35] text-black font-bold'
+                  : 'bg-[#111] text-neutral-400 border border-[#1a1a1a] hover:bg-[#1a1a1a]'
+              }`}
+            >
+              {page}
+            </button>
+          )
+        ))}
+
+        {/* Next Button */}
+        <button 
+          onClick={() => setOrderHistoryPage(prev => Math.min(TOTAL_ORDER_PAGES, prev + 1))}
+          disabled={orderHistoryPage === TOTAL_ORDER_PAGES}
+          className={`w-8 h-8 flex items-center justify-center rounded transition-colors ${
+            orderHistoryPage === TOTAL_ORDER_PAGES
+              ? 'bg-[#0a0a0a] text-neutral-700 border border-[#1a1a1a] cursor-not-allowed'
+              : 'bg-[#111] text-neutral-500 border border-[#1a1a1a] hover:bg-[#1a1a1a]'
+          }`}
+        >
+          &gt;
+        </button>
       </div>
     </div>
   </div>
@@ -557,7 +669,7 @@ const CustomerProfile = () => {
                 </div>
               </div>
 
-              {/* Table remains unchanged */}
+              {/* Table */}
               <div className="bg-[#0e0e0e] rounded-xl border border-[#222] overflow-x-auto">
                 <table className="min-w-full divide-y divide-[#222]">
                   <thead className="bg-[#0e0e0e]">
@@ -571,91 +683,75 @@ const CustomerProfile = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#222] bg-[#0d0d0d]">
-                    {/* Row 1 */}
-                    <tr className="bg-[#000] transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-xs font-medium text-white">Debit</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-neutral-400 text-right">Oct 24, 2023 • 18:42</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-white font-medium">#Order-5674 - Voucher</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-white">N2,580.00</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <span className="inline-flex items-center justify-end gap-1.5 text-[10px] font-bold text-[#22c55e] uppercase tracking-wider">
-                          <span className="w-1.5 h-1.5 bg-[#22c55e] rounded-full"></span>
-                          SUCCESS
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-[#E7E5E5]">trf-Order-5768-785788949</td>
-                    </tr>
-                    {/* Row 2 */}
-                    <tr className="bg-[#000] transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-xs font-medium text-white">Credit</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-neutral-400 text-right">Oct 24, 2023 • 18:42</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-white font-medium">VoucherPurchase</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-white">N2,580.00</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <span className="inline-flex items-center justify-end gap-1.5 text-[10px] font-bold text-[#22c55e] uppercase tracking-wider">
-                          <span className="w-1.5 h-1.5 bg-[#22c55e] rounded-full"></span>
-                          SUCCESS
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-[#E7E5E5]">trf-Order-5768-785788949</td>
-                    </tr>
-                    {/* Row 3 */}
-                    <tr className="bg-[#000] transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-xs font-medium text-white">Debit</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-neutral-400 text-right">Oct 20, 2023 • 20:10</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-white font-medium">Gift Received</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-white">N2,580.00</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <span className="inline-flex items-center justify-end gap-1.5 text-[10px] font-bold text-[#ef4444] uppercase tracking-wider">
-                          <span className="w-1.5 h-1.5 bg-[#ef4444] rounded-full"></span>
-                          FAILED
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-[#E7E5E5]">trf-Order-5768-785788949</td>
-                    </tr>
-                    {/* Row 4 */}
-                    <tr className="bg-[#000] transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-xs font-medium text-white">Credit</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-neutral-400 text-right">Oct 18, 2023 • 19:15</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-white font-medium">Student</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-white">N2,580.00</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <span className="inline-flex items-center justify-end gap-1.5 text-[10px] font-bold text-[#FFB782] uppercase tracking-wider">
-                          <span className="w-1.5 h-1.5 bg-[#FFB782] rounded-full"></span>
-                          PENDING
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-[#E7E5E5]">trf-Order-5768-785788949</td>
-                    </tr>
-                    {/* Row 5 */}
-                    <tr className="bg-[#000] transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-xs font-medium text-white">Credit</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-neutral-400 text-right">Oct 18, 2023 • 19:15</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-white font-medium">Student</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-white">N2,580.00</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <span className="inline-flex items-center justify-end gap-1.5 text-[10px] font-bold text-[#FFB782] uppercase tracking-wider">
-                          <span className="w-1.5 h-1.5 bg-[#FFB782] rounded-full"></span>
-                          PENDING
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-[#E7E5E5]">trf-Order-5768-785788949</td>
-                    </tr>
+                    {paginatedVouchers.map((voucher, idx) => (
+                      <tr key={idx} className="bg-[#000] transition-colors hover:bg-[#0a0a0a]">
+                        <td className="px-6 py-4 whitespace-nowrap text-xs font-medium text-white">{voucher.type}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-xs text-neutral-400 text-right">{voucher.date}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-xs text-white font-medium">{voucher.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-xs text-white">{voucher.amount}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                          <span className={`inline-flex items-center justify-end gap-1.5 text-[10px] font-bold uppercase tracking-wider ${getStatusStyle(voucher.status)}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${getStatusDot(voucher.status)}`}></span>
+                            {voucher.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-xs text-[#E7E5E5]">{voucher.reference}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
 
-              {/* Pagination remains unchanged */}
+              {/* Pagination */}
               <div className="flex items-center justify-between mt-6">
-                <span className="text-xs text-neutral-400">Showing <span className="font-bold text-white">1-5</span> of <span className="font-bold text-white">142</span> orders</span>
+                <span className="text-xs text-neutral-400">
+                  Showing <span className="font-bold text-white">{(voucherHistoryPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(voucherHistoryPage * ITEMS_PER_PAGE, TOTAL_VOUCHERS)}</span> of <span className="font-bold text-white">{TOTAL_VOUCHERS}</span> orders
+                </span>
                 <div className="flex items-center gap-1">
-                  <button className="w-8 h-8 flex items-center justify-center rounded bg-[#1a1a1a] text-neutral-500 border border-[#333] hover:bg-[#222]">&lt;</button>
-                  <button className="w-8 h-8 flex items-center justify-center rounded bg-[#e86b35] text-black font-bold">1</button>
-                  <button className="w-8 h-8 flex items-center justify-center rounded bg-[#1a1a1a] text-neutral-400 border border-[#333] hover:bg-[#222]">2</button>
-                  <button className="w-8 h-8 flex items-center justify-center rounded bg-[#1a1a1a] text-neutral-400 border border-[#333] hover:bg-[#222]">3</button>
-                  <span className="w-8 h-8 flex items-center justify-center text-neutral-500">...</span>
-                  <button className="w-8 h-8 flex items-center justify-center rounded bg-[#1a1a1a] text-neutral-400 border border-[#333] hover:bg-[#222]">29</button>
-                  <button className="w-8 h-8 flex items-center justify-center rounded bg-[#1a1a1a] text-neutral-500 border border-[#333] hover:bg-[#222]">&gt;</button>
+                  {/* Previous Button */}
+                  <button 
+                    onClick={() => setVoucherHistoryPage(prev => Math.max(1, prev - 1))}
+                    disabled={voucherHistoryPage === 1}
+                    className={`w-8 h-8 flex items-center justify-center rounded transition-colors ${
+                      voucherHistoryPage === 1
+                        ? 'bg-[#0a0a0a] text-neutral-700 border border-[#333] cursor-not-allowed'
+                        : 'bg-[#1a1a1a] text-neutral-500 border border-[#333] hover:bg-[#222]'
+                    }`}
+                  >
+                    &lt;
+                  </button>
+
+                  {/* Page Numbers */}
+                  {generatePageNumbers(voucherHistoryPage, TOTAL_VOUCHER_PAGES).map((page, idx) => (
+                    page === '...' ? (
+                      <span key={`ellipsis-${idx}`} className="w-8 h-8 flex items-center justify-center text-neutral-500 text-xs">...</span>
+                    ) : (
+                      <button
+                        key={page}
+                        onClick={() => setVoucherHistoryPage(page)}
+                        className={`w-8 h-8 flex items-center justify-center rounded transition-colors text-xs font-medium ${
+                          voucherHistoryPage === page
+                            ? 'bg-[#e86b35] text-black font-bold'
+                            : 'bg-[#1a1a1a] text-neutral-400 border border-[#333] hover:bg-[#222]'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  ))}
+
+                  {/* Next Button */}
+                  <button 
+                    onClick={() => setVoucherHistoryPage(prev => Math.min(TOTAL_VOUCHER_PAGES, prev + 1))}
+                    disabled={voucherHistoryPage === TOTAL_VOUCHER_PAGES}
+                    className={`w-8 h-8 flex items-center justify-center rounded transition-colors ${
+                      voucherHistoryPage === TOTAL_VOUCHER_PAGES
+                        ? 'bg-[#0a0a0a] text-neutral-700 border border-[#333] cursor-not-allowed'
+                        : 'bg-[#1a1a1a] text-neutral-500 border border-[#333] hover:bg-[#222]'
+                    }`}
+                  >
+                    &gt;
+                  </button>
                 </div>
               </div>
             </div>
