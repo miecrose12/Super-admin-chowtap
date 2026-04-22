@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Search, ListFilter, ShieldCheck, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ListFilter, ShieldCheck, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 
 export default function Revenue() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -151,7 +151,7 @@ export default function Revenue() {
                   className="flex items-center justify-between gap-3 bg-[#161616] hover:bg-[#1f1f1f] text-[#d4d4d4] px-4 py-2.5 rounded-[4px] text-[12px] font-medium border border-[#262626] transition-colors min-w-[140px]"
                 >
                   {selectedPeriod}
-                  <span className="material-symbols-outlined text-[16px]">expand_more</span>
+                  <ChevronDown size={16} className="text-gray-400" />
                 </button>
 
                 {isDropdownOpen && (
