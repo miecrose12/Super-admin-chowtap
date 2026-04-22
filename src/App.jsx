@@ -20,6 +20,7 @@ import Review from './pages/Revenue';
 import Revenue from './pages/Revenue';
 import Editrider from './pages/Editrider';
 import Vouchers from './pages/Vouchers';
+import Specialo from './pages/Specialo';
 
 
 
@@ -99,6 +100,9 @@ function App() {
 
           {/* Revenue */}
           <Route path="/vouchers" element={<Vouchers />} />
+
+          {/* Revenue */}
+          <Route path="/special-orders" element={<Specialo />} />
 
 
           {/* Catch-all for nested routes */}

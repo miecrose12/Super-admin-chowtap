@@ -1,24 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { 
+  ShoppingBag, 
+  Users, 
+  Shield, 
+  ShieldCheck, 
+  Rocket, 
+  UserCheck, 
+  Calendar, 
+  ChevronDown 
+} from 'lucide-react';
 
 // ============================================================================
 // STAT CARD COMPONENT
 // ============================================================================
-const StatCard = ({ title, value, trend, trendType, icon }) => {
+const StatCard = ({ title, value, trend, trendType, Icon }) => {
   return (
     <div className="bg-[#111111] rounded-xl p-6 relative border border-[#262626] shadow-sm flex flex-col justify-between min-h-[170px]">
-      {/* Glowing Left Accent */}
       <div className="absolute left-0 top-1/2 -translate-y-1/2 h-[95%] w-[3px] bg-gradient-to-b from-[#df7d27] to-[#e88d40] rounded-r shadow-[0_0_12px_rgba(223,125,39,0.6)]"></div>
       
       <div className="flex justify-between items-start pl-2">
         <span className="text-[10px] font-bold text-[#DC781B] tracking-[0.15em] uppercase mt-1">
           {title}
         </span>
-        <span 
-          className="material-symbols-outlined text-[#555] text-[22px]"
-          style={{ fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24" }}
-        >
-          {icon}
-        </span>
+        <Icon size={22} className="text-[#555]" strokeWidth={1.5} />
       </div>
       
       <div className="pl-2 mt-auto">
@@ -141,12 +147,7 @@ const VouchersCard = () => {
   return (
     <div className="bg-[#df7d27] rounded-xl p-8 pb-10 relative overflow-hidden h-full flex flex-col justify-center shadow-lg min-h-[300px]">
       <div className="absolute -right-12 -top-12 text-white/[0.07] pointer-events-none">
-        <span 
-          className="material-symbols-outlined transform -rotate-12"
-          style={{ fontVariationSettings: "'FILL' 1", fontSize: '240px' }}
-        >
-          rocket_launch
-        </span>
+        <Rocket size={240} className="transform -rotate-12" fill="currentColor" strokeWidth={0.5} />
       </div>
       
       <div className="relative z-10 mt-2">
@@ -180,12 +181,7 @@ const ActionRequiredCard = () => {
   return (
     <div className="bg-[#181818] rounded-xl p-7 pb-8 border border-[#262626] relative overflow-hidden h-full flex flex-col justify-center min-h-[250px]">
       <div className="absolute -right-8 -bottom-8 text-white/[0.03] pointer-events-none">
-        <span 
-          className="material-symbols-outlined"
-          style={{ fontVariationSettings: "'FILL' 1", fontSize: '180px' }}
-        >
-          verified_user
-        </span>
+        <UserCheck size={180} fill="currentColor" strokeWidth={0.5} />
       </div>
 
       <div className="relative z-10">
@@ -214,6 +210,10 @@ export default function Dashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState('Today');
   const dropdownRef = useRef(null);
   
+  // Date Picker States
+  const [startDate, setStartDate] = useState(new Date("2026-03-03"));
+  const [endDate, setEndDate] = useState(null);
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -227,76 +227,141 @@ export default function Dashboard() {
   const periods = ['Today', 'Yesterday', 'This week', 'This month', 'Last month', 'This year', 'All time', 'Custom period'];
 
   const stats = [
-    { title: 'Total Revenue', icon: 'admin_panel_settings', value: 'N 25,000.00', trend: '~ 12.4% from last month', trendType: 'positive' },
-    { title: 'Total Orders', icon: 'shopping_bag', value: '8,246', trend: '~ 4% from last month', trendType: 'positive' },
-    { title: 'Active Users', icon: 'group', value: '2,567', trend: '-- stable user base', trendType: 'neutral' },
-    { title: 'Active Riders', icon: 'local_police', value: '125', trend: 'LIVE NOW', trendType: 'live' },
+    { title: 'Total Revenue', Icon: Shield, value: 'N 25,000.00', trend: '~ 12.4% from last month', trendType: 'positive' },
+    { title: 'Total Orders', Icon: ShoppingBag, value: '8,246', trend: '~ 4% from last month', trendType: 'positive' },
+    { title: 'Active Users', Icon: Users, value: '2,567', trend: '-- stable user base', trendType: 'neutral' },
+    { title: 'Active Riders', Icon: ShieldCheck, value: '125', trend: 'LIVE NOW', trendType: 'live' },
   ];
 
   return (
-    <div className="min-h-screen bg-[#0E0E0E] p-4 md:p-8 font-sans text-[#f5f5f5] selection:bg-[#df7d27] selection:text-white">
-      <div className="max-w-[1240px] mx-auto">
-        
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <h2 className="text-[26px] font-bold tracking-wide">System Overview</h2>
+    <>
+      <style>{`
+        /* Overriding react-datepicker default styles to match your dark theme */
+        .react-datepicker {
+          background-color: #161616 !important;
+          border-color: #262626 !important;
+          font-family: inherit !important;
+          color: #d4d4d4 !important;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+        }
+        .react-datepicker__header {
+          background-color: #111111 !important;
+          border-bottom-color: #262626 !important;
+        }
+        .react-datepicker__current-month, .react-datepicker-time__header, .react-datepicker-year-header {
+          color: #f5f5f5 !important;
+        }
+        .react-datepicker__day-name, .react-datepicker__day, .react-datepicker__time-name {
+          color: #a0a0a0 !important;
+        }
+        .react-datepicker__day:hover, .react-datepicker__month-text:hover, .react-datepicker__quarter-text:hover, .react-datepicker__year-text:hover {
+          background-color: #222 !important;
+        }
+        .react-datepicker__day--selected, .react-datepicker__day--in-selecting-range, .react-datepicker__day--in-range,
+        .react-datepicker__month-text--selected, .react-datepicker__month-text--in-selecting-range, .react-datepicker__month-text--in-range {
+          background-color: #df7d27 !important;
+          color: #111 !important;
+          font-weight: bold;
+        }
+        .react-datepicker__day--keyboard-selected {
+          background-color: rgba(223, 125, 39, 0.3) !important;
+        }
+        .react-datepicker__triangle {
+          display: none; /* Looks cleaner without the pointer triangle */
+        }
+      `}</style>
+
+      <div className="min-h-screen bg-[#0E0E0E] p-4 md:p-8 font-sans text-[#f5f5f5] selection:bg-[#df7d27] selection:text-white">
+        <div className="max-w-[1240px] mx-auto">
           
-          <div className="flex flex-wrap items-center gap-3 relative">
-            {selectedPeriod === 'Custom period' && (
-              <div className="flex items-center gap-2 animate-in fade-in zoom-in duration-200">
-                <input type="text" defaultValue="03 Mar, 2026" className="bg-[#111111] border border-[#262626] text-[#a0a0a0] px-3 py-2 rounded-[4px] text-[12px] w-[110px] focus:border-[#df7d27] outline-none" />
-                <span className="text-[#666] text-[12px]">To</span>
-                <input type="text" placeholder="End Date" className="bg-[#111111] border border-[#262626] text-[#a0a0a0] px-3 py-2 rounded-[4px] text-[12px] w-[110px] focus:border-[#df7d27] outline-none" />
-                <button className="bg-[#df7d27] text-[#2b1707] font-bold px-4 py-2 rounded-[4px] text-[12px]">Apply</button>
-              </div>
-            )}
-
-            <div className="relative" ref={dropdownRef}>
-              <button 
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center justify-between gap-3 bg-[#161616] hover:bg-[#1f1f1f] text-[#d4d4d4] px-4 py-2.5 rounded-[4px] text-[12px] font-medium border border-[#262626] transition-colors min-w-[150px]"
-              >
-                <span className="material-symbols-outlined text-[16px] text-[#888]">calendar_today</span>
-                {selectedPeriod}
-                <span className="material-symbols-outlined text-[16px]">expand_more</span>
-              </button>
-
-              {isDropdownOpen && (
-                <div className="absolute right-0 top-[calc(100%+8px)] w-full bg-[#161616] border border-[#262626] rounded-[6px] shadow-2xl py-1 z-50">
-                  {periods.map((period) => (
-                    <button
-                      key={period}
-                      onClick={() => { setSelectedPeriod(period); setIsDropdownOpen(false); }}
-                      className={`w-full text-left px-4 py-2.5 text-[11px] font-medium transition-colors ${
-                        selectedPeriod === period ? 'text-[#df7d27] bg-[#222]' : 'text-[#888] hover:bg-[#1f1f1f] hover:text-[#d4d4d4]'
-                      }`}
-                    >
-                      {period}
-                    </button>
-                  ))}
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <h2 className="text-[26px] font-bold tracking-wide">System Overview</h2>
+            
+            <div className="flex flex-wrap items-center gap-3 relative z-40">
+              
+              {/* Updated Custom Period Component with DatePicker */}
+              {selectedPeriod === 'Custom period' && (
+                <div className="flex items-center gap-2 animate-in fade-in zoom-in duration-200">
+                  <div className="relative">
+                    <DatePicker
+                      selected={startDate}
+                      onChange={(date) => setStartDate(date)}
+                      selectsStart
+                      startDate={startDate}
+                      endDate={endDate}
+                      dateFormat="dd MMM, yyyy"
+                      placeholderText="Start Date"
+                      className="bg-[#111111] border border-[#262626] text-[#a0a0a0] px-3 py-2 rounded-[4px] text-[12px] w-[115px] focus:border-[#df7d27] outline-none transition-colors"
+                    />
+                  </div>
+                  <span className="text-[#666] text-[12px]">To</span>
+                  <div className="relative">
+                    <DatePicker
+                      selected={endDate}
+                      onChange={(date) => setEndDate(date)}
+                      selectsEnd
+                      startDate={startDate}
+                      endDate={endDate}
+                      minDate={startDate}
+                      dateFormat="dd MMM, yyyy"
+                      placeholderText="End Date"
+                      className="bg-[#111111] border border-[#262626] text-[#a0a0a0] px-3 py-2 rounded-[4px] text-[12px] w-[115px] focus:border-[#df7d27] outline-none transition-colors"
+                    />
+                  </div>
+                  <button className="bg-[#df7d27] hover:bg-[#c96e21] text-[#2b1707] font-bold px-4 py-2 rounded-[4px] text-[12px] transition-colors shadow-md">
+                    Apply
+                  </button>
                 </div>
               )}
+
+              <div className="relative" ref={dropdownRef}>
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center justify-between gap-3 bg-[#161616] hover:bg-[#1f1f1f] text-[#d4d4d4] px-4 py-2.5 rounded-[4px] text-[12px] font-medium border border-[#262626] transition-colors min-w-[150px]"
+                >
+                  <Calendar size={16} className="text-[#888]" />
+                  {selectedPeriod}
+                  <ChevronDown size={16} />
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="absolute right-0 top-[calc(100%+8px)] w-full bg-[#161616] border border-[#262626] rounded-[6px] shadow-2xl py-1 z-50">
+                    {periods.map((period) => (
+                      <button
+                        key={period}
+                        onClick={() => { setSelectedPeriod(period); setIsDropdownOpen(false); }}
+                        className={`w-full text-left px-4 py-2.5 text-[11px] font-medium transition-colors ${
+                          selectedPeriod === period ? 'text-[#df7d27] bg-[#222]' : 'text-[#888] hover:bg-[#1f1f1f] hover:text-[#d4d4d4]'
+                        }`}
+                      >
+                        {period}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Row 1: Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
-          {stats.map((stat, index) => <StatCard key={index} {...stat} />)}
-        </div>
+          {/* Row 1: Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5 relative z-10">
+            {stats.map((stat, index) => <StatCard key={index} {...stat} />)}
+          </div>
 
-        {/* Row 2: Table & Vouchers */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
-          <div className="lg:col-span-7"><TopCampusesTable /></div>
-          <div className="lg:col-span-5"><VouchersCard /></div>
-        </div>
+          {/* Row 2: Table & Vouchers */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5 relative z-10">
+            <div className="lg:col-span-7"><TopCampusesTable /></div>
+            <div className="lg:col-span-5"><VouchersCard /></div>
+          </div>
 
-        {/* Row 3: Action & Chart */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          <div className="lg:col-span-4"><ActionRequiredCard /></div>
-          <div className="lg:col-span-8"><PeakHoursChart /></div>
+          {/* Row 3: Action & Chart */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 relative z-10">
+            <div className="lg:col-span-4"><ActionRequiredCard /></div>
+            <div className="lg:col-span-8"><PeakHoursChart /></div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
