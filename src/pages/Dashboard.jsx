@@ -1,21 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import logo2_1 from '../assets/dashboard.svg';
+import logo2_2 from '../assets/icon6.svg';
+import logo2_3 from '../assets/icon4.svg';
+import logo2_4 from '../assets/dashboard.svg';
 import { 
-  ShoppingBag, 
-  Users, 
-  Shield, 
-  ShieldCheck, 
   Rocket, 
   UserCheck, 
   Calendar, 
-  ChevronDown 
+  ChevronDown, 
+  ShieldCheck,
+  BadgeCheck
 } from 'lucide-react';
 
 // ============================================================================
 // STAT CARD COMPONENT
 // ============================================================================
-const StatCard = ({ title, value, trend, trendType, Icon }) => {
+const StatCard = ({ title, value, trend, trendType, logo }) => {
   return (
     <div className="bg-[#111111] rounded-xl p-6 relative border border-[#262626] shadow-sm flex flex-col justify-between min-h-[170px]">
       <div className="absolute left-0 top-1/2 -translate-y-1/2 h-[95%] w-[3px] bg-gradient-to-b from-[#df7d27] to-[#e88d40] rounded-r shadow-[0_0_12px_rgba(223,125,39,0.6)]"></div>
@@ -24,7 +26,7 @@ const StatCard = ({ title, value, trend, trendType, Icon }) => {
         <span className="text-[10px] font-bold text-[#DC781B] tracking-[0.15em] uppercase mt-1">
           {title}
         </span>
-        <Icon size={22} className="text-[#555]" strokeWidth={1.5} />
+        <img src={logo} alt="icon" className="w-[22px] h-[22px] opacity-50 hover:opacity-100 transition-opacity" />
       </div>
       
       <div className="pl-2 mt-auto">
@@ -60,11 +62,11 @@ const TopCampusesTable = () => {
         <p className="text-[12px] text-[#777]">Ranking based on order density and revenue.</p>
       </div>
       
-      <div className="bg-[#111111] rounded-xl border border-[#262626] overflow-hidden">
+      <div className="bg-[#000000] rounded-xl border border-[#262626] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="text-[#666] text-[10px] uppercase tracking-widest font-bold border-b border-[#262626] bg-[#111111]">
+              <tr className="text-[#666] text-[10px] uppercase tracking-widest font-bold border-b border-[#262626] bg-[#131313]">
                 <th className="px-6 py-5">Campus Name</th>
                 <th className="px-6 py-5">Total Orders</th>
                 <th className="px-6 py-5">Gross Revenue</th>
@@ -73,7 +75,7 @@ const TopCampusesTable = () => {
             </thead>
             <tbody className="text-[12px]">
               {campuses.map((campus, index) => (
-                <tr key={index} className="border-b border-[#0e0e0e] last:border-0 bg-[#0e0e0e] hover:bg-[#151515] transition-colors">
+                <tr key={index} className="border-b border-[#0e0e0e] last:border-0 bg-[#000000] hover:bg-[#151515] transition-colors">
                   <td className="px-6 py-5 font-bold text-[#e5e5e5] tracking-wide">{campus.name}</td>
                   <td className="px-6 py-5 text-[#ccc] font-semibold">{campus.orders}</td>
                   <td className="px-6 py-5 font-bold text-[#df7d27]">{campus.revenue}</td>
@@ -181,7 +183,7 @@ const ActionRequiredCard = () => {
   return (
     <div className="bg-[#181818] rounded-xl p-7 pb-8 border border-[#262626] relative overflow-hidden h-full flex flex-col justify-center min-h-[250px]">
       <div className="absolute -right-8 -bottom-8 text-white/[0.03] pointer-events-none">
-        <UserCheck size={180} fill="currentColor" strokeWidth={0.5} />
+        <BadgeCheck size={180} fill="currentColor" strokeWidth={0.5} />
       </div>
 
       <div className="relative z-10">
@@ -227,10 +229,10 @@ export default function Dashboard() {
   const periods = ['Today', 'Yesterday', 'This week', 'This month', 'Last month', 'This year', 'All time', 'Custom period'];
 
   const stats = [
-    { title: 'Total Revenue', Icon: Shield, value: 'N 25,000.00', trend: '~ 12.4% from last month', trendType: 'positive' },
-    { title: 'Total Orders', Icon: ShoppingBag, value: '8,246', trend: '~ 4% from last month', trendType: 'positive' },
-    { title: 'Active Users', Icon: Users, value: '2,567', trend: '-- stable user base', trendType: 'neutral' },
-    { title: 'Active Riders', Icon: ShieldCheck, value: '125', trend: 'LIVE NOW', trendType: 'live' },
+    { title: 'Total Revenue', value: 'N 25,000.00', trend: '~ 12.4% from last month', trendType: 'positive', logo: logo2_1 },
+    { title: 'Total Orders', value: '8,246', trend: '~ 4% from last month', trendType: 'positive', logo: logo2_2 },
+    { title: 'Active Users', value: '2,567', trend: '-- stable user base', trendType: 'neutral', logo: logo2_3 },
+    { title: 'Active Riders', value: '125', trend: 'LIVE NOW', trendType: 'live', logo: logo2_4 },
   ];
 
   return (

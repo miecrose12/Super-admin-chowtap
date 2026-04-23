@@ -23,7 +23,7 @@ const initialOrdersData = Array.from({ length: 24 * 5 }, (_, i) => ({
   name: ['Alexandrea Laurent', 'Marcus Knight', 'Sarah Connor', 'John Doe', 'Bruce Wayne'][i % 5],
   restaurant: ['Gourmet Burger Kitchen', 'Sushi Master Elite', 'The Italian Bistro', 'Pizza Palace', 'Gotham Steaks'][i % 5],
   status: ['PROCESSING', 'DELIVERED', 'CONFIRMED', 'REFUNDED', 'DELIVERED'][i % 5],
-  amount: ['w$142.50', '$84.20', '$210.00', '$45.00', '$532.18'][i % 5],
+  amount: ['$142.50', '$84.20', '$210.00', '$45.00', '$532.18'][i % 5],
   day: 'Wednesday',
   checked: false,
 }));
@@ -322,10 +322,10 @@ const OrdersView = () => {
       </div>
 
       {/* Data Table */}
-      <div className="bg-[#0b0b0b] rounded-lg border border-[#2a2a2a] overflow-hidden">
+      <div className="bg-[#000000] rounded-lg border border-[#2a2a2a] overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-[#2a2a2a] bg-[#0f0f0f]">
+            <tr className="border-b border-[#2a2a2a] bg-[#131313]">
               <th className="py-4 px-6 w-12">
                 <CustomCheckbox 
                   checked={currentOrders.length > 0 && currentOrders.every(o => o.checked)} 
@@ -500,7 +500,7 @@ export default function Speialo() {
   const [activeTab, setActiveTab] = useState('orders');
 
   return (
-    <div className="min-h-screen bg-[#0b0b0b] font-sans p-8 selection:bg-[#e87922]/30">
+    <div className="min-h-screen bg-[#0e0e0e] font-sans p-8 selection:bg-[#e87922]/30">
       <div className="max-w-[1300px] mx-auto">
         
         {/* Top Navigation Tabs */}

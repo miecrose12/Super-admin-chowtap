@@ -128,7 +128,7 @@ const Riders = () => {
         }
       `}</style>
 
-      <div className="min-h-screen bg-[#0A0A0A] text-white p-8 font-sans">
+      <div className="min-h-screen bg-[#0e0e0e] text-white p-8 font-sans">
         
         {/* Header Section */}
         <div className="flex justify-between items-center mb-8">
@@ -280,10 +280,10 @@ const Riders = () => {
         </div>
 
         {/* Data Table */}
-        <div className="bg-[#141414] border border-gray-800 rounded-md overflow-hidden">
+        <div className="bg-[#000000] border border-black rounded-md overflow-hidden">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-gray-800 bg-[#0F0F0F]">
+              <tr className="border-b border-[#000000] bg-[#131313]">
                 <th className="px-6 py-5 text-[10px] font-bold tracking-widest text-gray-400 uppercase">Rider Profile</th>
                 <th className="px-6 py-5 text-[10px] font-bold tracking-widest text-gray-400 uppercase">Phone Number</th>
                 <th className="px-6 py-5 text-[10px] font-bold tracking-widest text-gray-400 uppercase text-center">Completed</th>

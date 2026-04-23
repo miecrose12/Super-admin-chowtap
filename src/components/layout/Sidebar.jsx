@@ -1,11 +1,28 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  LayoutDashboard, Users, ShoppingBag, Store, Bike, 
+  LayoutDashboard, ShoppingBag, Store, Bike, 
   Wallet, Ticket, Gift, ReceiptText, ShieldCheck, 
   LifeBuoy, LogOut, ChevronLeft 
 } from 'lucide-react';
-import logo from '../../assets/Group 644.svg';
+import logo from '../../assets/Vector.svg';
+import logo2 from '../../assets/logo2.svg';
+
+// Import custom SVG icons for User Management through Special Orders
+import icon3Colored from '../../assets/icon3.svg';
+import icon3Uncolored from '../../assets/icon4.svg';
+import icon5Colored from '../../assets/icon5.svg';
+import icon5Uncolored from '../../assets/icon6.svg';
+import icon7Colored from '../../assets/icon7.svg';
+import icon7Uncolored from '../../assets/icon8.svg';
+import icon9Colored from '../../assets/icon9.svg';
+import icon9Uncolored from '../../assets/icon10.svg';
+import icon11Colored from '../../assets/icon11.svg';
+import icon11Uncolored from '../../assets/icon12.svg';
+import icon13Colored from '../../assets/icon13.svg';
+import icon13Uncolored from '../../assets/icon14.svg';
+import icon15Colored from '../../assets/icon15.svg';
+import icon15Uncolored from '../../assets/icon16.svg';
 
 const Sidebar = ({ 
   isMobileOpen, 
@@ -55,16 +72,53 @@ const Sidebar = ({
     mainContent.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPath]);
 
+  // Menu items configuration with custom SVG icons
   const menuItems = [
-    { path: '/dashboard', icon: LayoutDashboard, label: 'System Overview', initials: 'SO' },
-    { path: '/users', icon: Users, label: 'User Management', initials: 'UM' },
-    { path: '/orders', icon: ShoppingBag, label: 'Order Management', initials: 'OM' },
-    { path: '/vendors', icon: Store, label: 'Vendor Management', initials: 'VM' },
-    { path: '/riders', icon: Bike, label: 'Rider Management', initials: 'RM' },
-    { path: '/revenue', icon: Wallet, label: 'Revenue', initials: 'RV' },
-    { path: '/vouchers', icon: Ticket, label: 'Vouchers', initials: 'VC' },
-    { path: '/special-orders', icon: Gift, label: 'Special Orders', initials: 'SP' },
-    { path: '/transactions', icon: ReceiptText, label: 'Transactions', initials: 'TX' },
+    { path: '/dashboard', icon: LayoutDashboard, label: 'System Overview', useLucide: true },
+    { 
+      path: '/users', 
+      coloredIcon: icon3Colored, 
+      uncoloredIcon: icon3Uncolored,
+      label: 'User Management',
+      useLucide: false 
+    },
+    { path: '/orders', icon: ShoppingBag, label: 'Order Management', useLucide: true },
+    { 
+      path: '/vendors', 
+      coloredIcon: icon5Colored, 
+      uncoloredIcon: icon5Uncolored,
+      label: 'Vendor Management',
+      useLucide: false 
+    },
+    { 
+      path: '/riders', 
+      coloredIcon: icon7Colored, 
+      uncoloredIcon: icon7Uncolored,
+      label: 'Rider Management',
+      useLucide: false 
+    },
+    { 
+      path: '/revenue', 
+      coloredIcon: icon9Colored, 
+      uncoloredIcon: icon9Uncolored,
+      label: 'Revenue',
+      useLucide: false 
+    },
+    { 
+      path: '/vouchers', 
+      coloredIcon: icon11Colored, 
+      uncoloredIcon: icon11Uncolored,
+      label: 'Vouchers',
+      useLucide: false 
+    },
+    { 
+      path: '/special-orders', 
+      coloredIcon: icon15Colored, 
+      uncoloredIcon: icon15Uncolored,
+      label: 'Special Orders',
+      useLucide: false 
+    },
+    { path: '/transactions', icon: ReceiptText, label: 'Transactions', useLucide: true },
   ];
 
   const isRouteActive = (menuPath) => {
@@ -83,6 +137,31 @@ const Sidebar = ({
     }
   };
 
+  // Icon Renderer Component - handles both Lucide and custom SVG icons
+  const IconRenderer = ({ item, isActive }) => {
+    if (item.useLucide) {
+      // Use Lucide icons for System Overview, Order Management, and Transactions
+      const Icon = item.icon;
+      return (
+        <Icon 
+          size={20} 
+          strokeWidth={isActive ? 2.5 : 2}
+          className={isActive ? 'text-[#f57c00]' : 'text-[#8a8a8a]'}
+        />
+      );
+    } else {
+      // Use custom SVG icons with colored/uncolored states
+      const iconSrc = isActive ? item.coloredIcon : item.uncoloredIcon;
+      return (
+        <img 
+          src={iconSrc}
+          alt={item.label}
+          className="w-5 h-5 object-contain flex-shrink-0"
+        />
+      );
+    }
+  };
+
   return (
     <>
       <style>{`
@@ -90,22 +169,19 @@ const Sidebar = ({
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
-      <nav className={`h-screen flex flex-col fixed left-0 top-0 bg-[#0d0d0d] z-50 
+      <nav className={`h-screen flex flex-col fixed left-0 top-0 bg-[#0e0e0e] z-50 
           transition-all duration-300 ease-in-out border-r border-white/5
           ${isCollapsed ? 'w-20' : 'w-72'}
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         <div className={`p-6 pb-2 flex items-center justify-between ${isCollapsed ? 'flex-col gap-4' : ''}`}>
-          {/* Logo is always visible; text only shows when expanded */}
+          {/* Logo switches based on collapse state */}
           <div className={`flex items-center gap-2 ${isCollapsed ? 'justify-center' : ''}`}>
             <img 
-              src={logo} 
+              src={isCollapsed ? logo2 : logo} 
               alt="ChowTap logo" 
-              className="w-7 h-7 flex-shrink-0 object-contain"
+              className={`flex-shrink-0 object-contain transition-all duration-300 ${isCollapsed ? 'w-12 h-12' : 'w-auto h-9'}`}
             />
-            {!isCollapsed && (
-              <h1 className="text-[#f57c00] text-xl font-bold tracking-tight">ChowTap</h1>
-            )}
           </div>
 
           <button 
@@ -151,7 +227,6 @@ const Sidebar = ({
             <ul className="space-y-1">
               {menuItems.map((item) => {
                 const isActive = isRouteActive(item.path);
-                const Icon = item.icon;
                 
                 return (
                   <li key={item.path} className="relative group">
@@ -160,28 +235,21 @@ const Sidebar = ({
                       onClick={handleLinkClick}
                       className={`
                         w-full flex items-center transition-all duration-200 rounded-lg
-                        ${isCollapsed ? 'justify-center py-2.5' : 'py-2.5 px-4 gap-4'}
+                        ${isCollapsed ? 'justify-center py-3' : 'py-2.5 px-4 gap-4'}
                         ${isActive 
                           ? 'bg-[#1a1a1a] text-[#f57c00]' 
                           : 'text-[#8a8a8a] hover:text-white hover:bg-white/5'
                         }
                       `}
                     >
-                      {isCollapsed ? (
-                        <div className="flex items-center gap-1.5">
-                          <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
-                          <span className={`text-[9px] font-bold tracking-widest uppercase leading-none transition-all
-                            ${isActive ? 'text-[#f57c00]' : 'text-[#555] group-hover:text-[#888]'}`}>
-                            {item.initials}
-                          </span>
-                        </div>
-                      ) : (
-                        <>
-                          <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-                          <span className="text-[13px] font-medium tracking-wide whitespace-nowrap">{item.label}</span>
-                        </>
+                      {/* Icon Renderer - handles both Lucide and custom SVG */}
+                      <IconRenderer item={item} isActive={isActive} />
+                      
+                      {!isCollapsed && (
+                        <span className="text-[13px] font-medium tracking-wide whitespace-nowrap">{item.label}</span>
                       )}
                       
+                      {/* Active indicator bar */}
                       {isActive && (
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-[3px] bg-[#f57c00] rounded-l-full" />
                       )}

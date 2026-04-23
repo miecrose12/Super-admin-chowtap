@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MdOutlinePerson, MdOutlineLock, MdOutlineLockOpen } from 'react-icons/md';
-import logo from '../assets/Group 644.svg';
+import logo from '../assets/logo3.svg';
 
 const ChowTapAdminLogin = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');

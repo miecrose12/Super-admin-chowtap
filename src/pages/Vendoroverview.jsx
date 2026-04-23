@@ -461,7 +461,7 @@ const MenuTab = () => {
   };
 
   return (
-    <div className="bg-[#0f0f0f] min-h-screen p-6 font-sans text-white">
+    <div className="bg-[#0e0e0e] min-h-screen p-6 font-sans text-white">
       <div className="max-w-[1100px] mx-auto space-y-6">
         
         {/* Top Actions */}
@@ -642,7 +642,7 @@ const OrdersTab = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0a0a0a] text-white p-6 space-y-6">
+    <div className="flex flex-col h-full bg-[#0e0e0e] text-white p-6 space-y-6">
       {/* Top Filters & Actions */}
       <div className="flex justify-between items-center w-full">
         <div className="relative w-72">
