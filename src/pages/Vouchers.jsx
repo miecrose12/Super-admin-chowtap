@@ -5,11 +5,213 @@ import {
   Search, Plus, Pencil, Trash2, MoreVertical, X, Info, 
   ChevronLeft, ChevronRight, Filter, Utensils, 
   Coffee, Wine, Sparkles, User, Ticket, Wallet,
-  ChevronDown
+  ChevronDown, ArrowLeft, Eye, Pause, RotateCcw
 } from 'lucide-react';
 
+// Userw Component embedded
+const UserDetails = ({ userName, onBack, activeTab, setActiveTab }) => {
+  return (
+    <div className="min-h-screen bg-[#0f0f0f] text-white p-8 font-sans">
+      {/* Tab Navigation */}
+      <div className="flex items-center gap-8 border-b border-[#222] mb-8">
+        <button 
+          onClick={() => setActiveTab('products')}
+          className={`flex items-center gap-2 text-[15px] font-semibold tracking-wide transition-colors pb-3 border-b-2 ${
+            activeTab === 'products' 
+              ? 'text-[#DC781B] border-[#DC781B]' 
+              : 'text-gray-400 border-transparent hover:text-gray-300'
+          }`}
+        >
+          <Ticket size={20} className={activeTab === 'products' ? 'text-[#DC781B]' : 'text-gray-400'} />
+          Voucher Products
+        </button>
+        <button 
+          onClick={() => setActiveTab('wallet')}
+          className={`flex items-center gap-2 text-[15px] font-semibold tracking-wide transition-colors pb-3 border-b-2 ${
+            activeTab === 'wallet' 
+              ? 'text-[#DC781B] border-[#DC781B]' 
+              : 'text-gray-400 border-transparent hover:text-gray-300'
+          }`}
+        >
+          <Wallet size={20} className={activeTab === 'wallet' ? 'text-[#DC781B]' : 'text-gray-400'} />
+          User Wallet
+        </button>
+      </div>
+      {/* Header Section with Back Button */}
+      <div className="flex justify-between items-start mb-8">
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={onBack}
+            className="h-12 w-12 flex items-center justify-center border border-gray-700 rounded-lg text-gray-400 hover:text-white hover:border-orange-500 transition-all duration-200 bg-[#181818] group"
+          >
+            <ArrowLeft className="h-5 w-5 group-hover:translate-x-[-2px] transition-transform" />
+          </button>
+          
+          <div className="flex flex-col justify-center ml-2">
+            <h1 className="text-2xl font-semibold mb-1">Sarah Jane</h1>
+            <div className="flex items-center gap-4 text-sm text-gray-400">
+              <span className="flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#e07a3e]" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                </svg>
+                sarahjane@gmail.com
+              </span>
+              <span className="flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#e07a3e]" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                </svg>
+                McPherson University
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex gap-4">
+          <button className="flex items-center gap-2 px-5 py-2.5 bg-[#252525] border border-gray-700 hover:bg-[#303030] rounded-lg text-sm font-medium transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Manage Funds
+          </button>
+          <button className="flex items-center gap-2 px-5 py-2.5 bg-[#db3535] hover:bg-[#eb4545] rounded-lg text-sm font-medium transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            Freeze Account
+          </button>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-4 gap-6 mb-10">
+        {[
+          { title: "ACTIVE VOUCHERS", value: "Student" },
+          { title: "VOUCHER AMOUNT", value: "N21,240.50" },
+          { title: "GIFT VOUCHER", value: "N21,240.50" },
+        ].map((card, idx) => (
+          <div key={idx} className="bg-[#1c1c1c] p-6 rounded-md border-r-4 border-r-[#e07a3e]">
+            <p className="text-xs text-gray-400 font-semibold tracking-wider mb-3">{card.title}</p>
+            <p className="text-3xl font-bold">{card.value}</p>
+          </div>
+        ))}
+        <div className="bg-[#1c1c1c] p-6 rounded-md border-r-4 border-r-[#e07a3e]">
+            <p className="text-xs text-[#e07a3e] font-semibold tracking-wider mb-3">CURRENT WALLET BALANCE</p>
+            <p className="text-3xl font-bold">482.50 <span className="text-xl text-[#e07a3e] font-medium">NGN</span></p>
+        </div>
+      </div>
+
+      {/* Transaction History Section */}
+      <div className="mb-4">
+        <h2 className="text-[#e07a3e] text-sm font-bold tracking-wider uppercase mb-2 inline-block border-b-2 border-[#e07a3e] pb-2">
+          Transaction History
+        </h2>
+        <div className="w-full h-px bg-gray-800 -mt-[2px]"></div>
+      </div>
+
+      <div className="bg-[#0f0f0f] pt-4">
+        {/* Table Filters */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="relative w-80">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input 
+              type="text" 
+              placeholder="Search reference..." 
+              className="w-full bg-[#161616] border-none text-sm text-white pl-10 pr-4 py-2.5 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-700 placeholder-gray-500"
+            />
+          </div>
+          
+          <div className="flex gap-3">
+            <button className="flex items-center gap-2 px-4 py-2 bg-[#1c1c1c] text-xs font-medium text-gray-400 rounded-md hover:bg-[#252525]">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Date Range
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 bg-[#1c1c1c] text-xs font-medium text-gray-400 rounded-md hover:bg-[#252525]">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+              </svg>
+              Status: All
+            </button>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="w-full overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="text-xs text-gray-400 uppercase tracking-wider border-b border-gray-800 bg-[#0f0f0f]">
+                <th className="py-4 px-4 font-semibold">Transaction<br/>Type</th>
+                <th className="py-4 px-4 font-semibold">Date & Time</th>
+                <th className="py-4 px-4 font-semibold">Transaction Name</th>
+                <th className="py-4 px-4 font-semibold">Amount</th>
+                <th className="py-4 px-4 font-semibold">Status</th>
+                <th className="py-4 px-4 font-semibold">Reference</th>
+              </tr>
+            </thead>
+            <tbody className="text-sm">
+              {[
+                { type: 'Debit', date: 'Oct 24, 2023 • 18:42', name: '#Order-5674 - Voucher', amount: 'N2,580.00', status: 'SUCCESS', ref: 'trf-Order-5768-785788949' },
+                { type: 'Credit', date: 'Oct 24, 2023 • 18:42', name: 'VoucherPurchase', amount: 'N2,580.00', status: 'SUCCESS', ref: 'trf-Order-5768-785788949' },
+                { type: 'Debit', date: 'Oct 20, 2023 • 20:10', name: 'Gift Received', amount: 'N2,580.00', status: 'FAILED', ref: 'trf-Order-5768-785788949' },
+                { type: 'Credit', date: 'Oct 18, 2023 • 19:15', name: 'Student', amount: 'N2,580.00', status: 'PENDING', ref: 'trf-Order-5768-785788949' },
+                { type: 'Credit', date: 'Oct 18, 2023 • 19:15', name: 'Student', amount: 'N2,580.00', status: 'PENDING', ref: 'trf-Order-5768-785788949' },
+              ].map((row, i) => (
+                <tr key={i} className="border-b border-[#181818] hover:bg-[#141414] transition-colors">
+                  <td className="py-5 px-4 font-medium">{row.type}</td>
+                  <td className="py-5 px-4 text-gray-400">{row.date}</td>
+                  <td className="py-5 px-4">{row.name}</td>
+                  <td className="py-5 px-4 font-medium">{row.amount}</td>
+                  <td className="py-5 px-4">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider ${
+                      row.status === 'SUCCESS' ? 'bg-[#0a2918] text-[#2ebd59]' : 
+                      row.status === 'FAILED' ? 'bg-[#2b1111] text-[#e04343]' : 
+                      'bg-[#291e0a] text-[#d99830]'
+                    }`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${
+                        row.status === 'SUCCESS' ? 'bg-[#2ebd59]' : 
+                        row.status === 'FAILED' ? 'bg-[#e04343]' : 
+                        'bg-[#d99830]'
+                      }`}></div>
+                      {row.status}
+                    </span>
+                  </td>
+                  <td className="py-5 px-4 text-gray-400 text-xs">{row.ref}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer & Pagination */}
+        <div className="flex justify-between items-center mt-6 text-sm text-gray-400">
+          <div>
+            Showing <span className="font-bold text-white">1-5</span> of <span className="font-bold text-white">142</span> transactions
+          </div>
+          <div className="flex items-center gap-1">
+            <button className="h-8 w-8 flex items-center justify-center rounded bg-[#1c1c1c] hover:bg-[#252525]">&lt;</button>
+            <button className="h-8 w-8 flex items-center justify-center rounded bg-[#e07a3e] text-white font-medium">1</button>
+            <button className="h-8 w-8 flex items-center justify-center rounded bg-[#1c1c1c] hover:bg-[#252525]">2</button>
+            <button className="h-8 w-8 flex items-center justify-center rounded bg-[#1c1c1c] hover:bg-[#252525]">3</button>
+            <span className="px-1 text-gray-500">...</span>
+            <button className="h-8 w-8 flex items-center justify-center rounded bg-[#1c1c1c] hover:bg-[#252525]">29</button>
+            <button className="h-8 w-8 flex items-center justify-center rounded bg-[#1c1c1c] hover:bg-[#252525]">&gt;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Main Vouchers Component
 const Vouchers = () => {
   const [activeTab, setActiveTab] = useState('products');
+  const [viewingUserDetails, setViewingUserDetails] = useState(null);
   const [isVoucherModalOpen, setIsVoucherModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState('All time');
@@ -23,6 +225,7 @@ const Vouchers = () => {
   const usersPerPage = 5;
   const [voucherSearchQuery, setVoucherSearchQuery] = useState('');
   const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [userActionDropdowns, setUserActionDropdowns] = useState({});
 
   const periods = ['Today', 'Yesterday', 'This week', 'This month', 'Last month', 'This year', 'All time', 'Custom period'];
 
@@ -114,6 +317,27 @@ const Vouchers = () => {
     setUserCurrentPage(1);
   };
 
+  const toggleUserActionDropdown = (userId) => {
+    setUserActionDropdowns(prev => ({
+      ...prev,
+      [userId]: !prev[userId]
+    }));
+  };
+
+  const handleViewDetails = (user) => {
+    setViewingUserDetails(user);
+  };
+
+  const handleSuspendAccount = (userId) => {
+    console.log('Suspend account:', userId);
+    setUserActionDropdowns(prev => ({ ...prev, [userId]: false }));
+  };
+
+  const handleReactivateAccount = (userId) => {
+    console.log('Reactivate account:', userId);
+    setUserActionDropdowns(prev => ({ ...prev, [userId]: false }));
+  };
+
   const PaginationControl = ({ currentPage, totalPages, onPageChange, totalItems, itemsPerPage }) => {
     const startItem = (currentPage - 1) * itemsPerPage + 1;
     const endItem = Math.min(currentPage * itemsPerPage, totalItems);
@@ -181,6 +405,18 @@ const Vouchers = () => {
       </div>
     );
   };
+
+  // If viewing user details, show the UserDetails component with back button
+  if (viewingUserDetails) {
+    return (
+      <UserDetails 
+        userName={viewingUserDetails.name}
+        onBack={() => setViewingUserDetails(null)}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
+    );
+  }
 
   return (
     <>
@@ -285,13 +521,13 @@ const Vouchers = () => {
               )}
 
               <div className="relative" ref={dropdownRef}>
-              <button 
-  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-  className="flex items-center justify-between gap-3 bg-[#161616] hover:bg-[#1f1f1f] text-[#d4d4d4] px-4 py-2.5 rounded-[4px] text-[12px] font-medium border border-[#262626] transition-colors min-w-[140px]"
->
-  {selectedPeriod}
-  <ChevronDown size={16} className="text-gray-400" />
-</button>
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center justify-between gap-3 bg-[#161616] hover:bg-[#1f1f1f] text-[#d4d4d4] px-4 py-2.5 rounded-[4px] text-[12px] font-medium border border-[#262626] transition-colors min-w-[140px]"
+                >
+                  {selectedPeriod}
+                  <ChevronDown size={16} className="text-gray-400" />
+                </button>
 
                 {isDropdownOpen && (
                   <div className="absolute right-0 top-[calc(100%+8px)] w-full bg-[#161616] border border-[#262626] rounded-[6px] shadow-2xl py-1 z-50">
@@ -507,7 +743,7 @@ const Vouchers = () => {
                 <div className="divide-y divide-[#1a1a1a]">
                   {paginatedUsers.length > 0 ? (
                     paginatedUsers.map((user, idx) => (
-                      <div key={idx} className="grid grid-cols-12 gap-4 items-center px-4 py-5 hover:bg-[#151515] transition-colors">
+                      <div key={idx} className="grid grid-cols-12 gap-4 items-center px-4 py-5 hover:bg-[#151515] transition-colors relative">
                         <div className="col-span-3 flex items-center gap-3">
                           <div className="w-10 h-10 rounded bg-[#1e293b] flex items-center justify-center text-blue-400 overflow-hidden">
                             <User size={24} className="mt-2" fill="currentColor"/>
@@ -532,10 +768,37 @@ const Vouchers = () => {
                           <div className="text-sm font-semibold text-gray-200">₦{user.balance}</div>
                           <div className="text-[11px] text-[#FFB782] mt-0.5">{user.subText}</div>
                         </div>
-                        <div className="col-span-1 flex items-center justify-end pr-4">
-                          <button className="text-gray-500 hover:text-white transition-colors">
+                        <div className="col-span-1 flex items-center justify-end pr-4 relative">
+                          <button 
+                            onClick={() => toggleUserActionDropdown(user.id)}
+                            className="text-gray-500 hover:text-white transition-colors p-1 hover:bg-[#222] rounded"
+                          >
                             <MoreVertical size={16} />
                           </button>
+
+                          {/* Dropdown Menu */}
+                          {userActionDropdowns[user.id] && (
+                            <div className="absolute right-0 top-full mt-1 bg-[#1a1a1a] border border-[#2a2a2a] rounded-md shadow-lg z-10 min-w-[180px] overflow-hidden">
+                              <button
+                                onClick={() => handleViewDetails(user)}
+                                className="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-[#252525] hover:text-white transition-colors border-b border-[#2a2a2a] flex items-center gap-2"
+                              >
+                                <Eye size={16} /> View Details
+                              </button>
+                              <button
+                                onClick={() => handleSuspendAccount(user.id)}
+                                className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-950/20 hover:text-red-300 transition-colors border-b border-[#2a2a2a] flex items-center gap-2"
+                              >
+                                <Pause size={16} /> Suspend Account
+                              </button>
+                              <button
+                                onClick={() => handleReactivateAccount(user.id)}
+                                className="w-full text-left px-4 py-3 text-sm text-green-400 hover:bg-green-950/20 hover:text-green-300 transition-colors flex items-center gap-2"
+                              >
+                                <RotateCcw size={16} /> Reactivate Account
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))
