@@ -495,8 +495,8 @@ const Vouchers = () => {
               </div>
 
               {/* Table */}
-              <div className="mt-2 bg-[#0f0f0f]">
-                <div className="grid grid-cols-12 gap-4 px-4 py-4 border-b border-[#222] text-[10px] font-bold text-[#FFB782] uppercase tracking-wider">
+              <div className="mt-2 bg-[#000000]">
+                <div className="bg-[#131313] grid grid-cols-12 gap-4 px-4 py-4 border-b border-[#222] text-[10px] font-bold text-[#FFB782] uppercase tracking-wider">
                   <div className="col-span-3">User Identity</div>
                   <div className="col-span-2">Status</div>
                   <div className="col-span-3">Campus</div>
