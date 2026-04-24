@@ -6,9 +6,8 @@ import {
   LifeBuoy, LogOut, ChevronLeft 
 } from 'lucide-react';
 import logo from '../../assets/Vector.svg';
-import logo2 from '../../assets/logo2.svg';
 
-// Import custom SVG icons for User Management through Special Orders
+// Import custom SVG icons
 import icon3Colored from '../../assets/icon3.svg';
 import icon3Uncolored from '../../assets/icon4.svg';
 import icon5Colored from '../../assets/icon5.svg';
@@ -64,7 +63,6 @@ const Sidebar = ({
     };
   }, [isCollapsed]);
 
-  // Scroll to top when route changes
   useEffect(() => {
     const mainContent = document.querySelector('main') || 
                        document.querySelector('[role="main"]') || 
@@ -72,7 +70,6 @@ const Sidebar = ({
     mainContent.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPath]);
 
-  // Menu items configuration with custom SVG icons
   const menuItems = [
     { path: '/dashboard', icon: LayoutDashboard, label: 'System Overview', useLucide: true },
     { 
@@ -131,22 +128,15 @@ const Sidebar = ({
     if (currentPath === menuPath || (currentPath === '/' && menuPath === '/dashboard')) {
       return true;
     }
-    if (currentPath.startsWith(menuPath + '/')) {
-      return true;
-    }
-    return false;
+    return currentPath.startsWith(menuPath + '/');
   };
 
   const handleLinkClick = () => {
-    if (isMobileOpen) {
-      onCloseMobile();
-    }
+    if (isMobileOpen) onCloseMobile();
   };
 
-  // Icon Renderer Component - handles both Lucide and custom SVG icons
   const IconRenderer = ({ item, isActive }) => {
     if (item.useLucide) {
-      // Use Lucide icons for System Overview, Order Management, and Transactions
       const Icon = item.icon;
       return (
         <Icon 
@@ -156,7 +146,6 @@ const Sidebar = ({
         />
       );
     } else {
-      // Use custom SVG icons with colored/uncolored states
       const iconSrc = isActive ? item.coloredIcon : item.uncoloredIcon;
       return (
         <img 
@@ -180,15 +169,17 @@ const Sidebar = ({
           ${isCollapsed ? 'w-20' : 'w-72'}
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
-        <div className={`p-6 pb-2 flex items-center justify-between ${isCollapsed ? 'flex-col gap-4' : ''}`}>
-          {/* Logo switches based on collapse state */}
-          <div className={`flex items-center gap-2 ${isCollapsed ? 'justify-center' : ''}`}>
-            <img 
-              src={isCollapsed ? logo2 : logo} 
-              alt="ChowTap logo" 
-              className={`flex-shrink-0 object-contain transition-all duration-300 ${isCollapsed ? 'w-12 h-12' : 'w-auto h-9'}`}
-            />
-          </div>
+        {/* Header Section: Logo is removed when collapsed to keep button at top */}
+        <div className={`p-6 pb-2 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
+          {!isCollapsed && (
+            <div className="flex items-center gap-2">
+              <img 
+                src={logo} 
+                alt="ChowTap logo" 
+                className="flex-shrink-0 object-contain w-auto h-9"
+              />
+            </div>
+          )}
 
           <button 
             onClick={onToggleCollapse}
@@ -198,6 +189,7 @@ const Sidebar = ({
           </button>
         </div>
 
+        {/* Profile Section */}
         <div className={`px-4 mb-2 mt-4 ${isCollapsed ? 'flex justify-center' : ''}`}>
           <div className={`flex items-center gap-3 p-2 bg-white/5 rounded-xl transition-all ${isCollapsed ? 'w-12 h-12 justify-center' : ''}`}>
             <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] flex items-center justify-center flex-shrink-0">
@@ -212,6 +204,7 @@ const Sidebar = ({
           </div>
         </div>
 
+        {/* Navigation Items */}
         <div className="relative flex-1 flex flex-col overflow-hidden">
           {showIndicator && (
             <div className="absolute right-1.5 top-2 bottom-2 w-[2px] bg-white/5 rounded-full z-20">
@@ -248,14 +241,12 @@ const Sidebar = ({
                         }
                       `}
                     >
-                      {/* Icon Renderer - handles both Lucide and custom SVG */}
                       <IconRenderer item={item} isActive={isActive} />
                       
                       {!isCollapsed && (
                         <span className="text-[13px] font-medium tracking-wide whitespace-nowrap">{item.label}</span>
                       )}
                       
-                      {/* Active indicator bar */}
                       {isActive && (
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-[3px] bg-[#f57c00] rounded-l-full" />
                       )}
@@ -271,6 +262,7 @@ const Sidebar = ({
             <div className="h-[1px] w-full bg-[#f57c00]/40 shadow-[0_0_8px_rgba(245,124,0,0.3)]" />
         </div>
 
+        {/* Bottom Actions */}
         <div className="pb-4 px-3 bg-[#0d0d0d]">
           <div className="space-y-0.5">
             <button className={`w-full flex items-center gap-4 text-[#8a8a8a] hover:text-white rounded-lg transition-colors ${isCollapsed ? 'justify-center py-3' : 'px-4 py-2'}`}>
