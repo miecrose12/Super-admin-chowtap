@@ -82,32 +82,38 @@ const Sidebar = ({
       label: 'User Management',
       useLucide: false 
     },
-    { path: '/orders', icon: ShoppingBag, label: 'Order Management', useLucide: true },
     { 
-      path: '/vendors', 
+      path: '/orders', 
       coloredIcon: icon5Colored, 
       uncoloredIcon: icon5Uncolored,
+      label: 'Order Management',
+      useLucide: false 
+    },
+    { 
+      path: '/vendors', 
+      coloredIcon: icon7Colored, 
+      uncoloredIcon: icon7Uncolored,
       label: 'Vendor Management',
       useLucide: false 
     },
     { 
       path: '/riders', 
-      coloredIcon: icon7Colored, 
-      uncoloredIcon: icon7Uncolored,
+      coloredIcon: icon9Colored, 
+      uncoloredIcon: icon9Uncolored,
       label: 'Rider Management',
       useLucide: false 
     },
     { 
       path: '/revenue', 
-      coloredIcon: icon9Colored, 
-      uncoloredIcon: icon9Uncolored,
+      coloredIcon: icon11Colored, 
+      uncoloredIcon: icon11Uncolored,
       label: 'Revenue',
       useLucide: false 
     },
     { 
       path: '/vouchers', 
-      coloredIcon: icon11Colored, 
-      uncoloredIcon: icon11Uncolored,
+      coloredIcon: icon13Colored, 
+      uncoloredIcon: icon13Uncolored,
       label: 'Vouchers',
       useLucide: false 
     },
