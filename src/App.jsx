@@ -1,42 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Layout from './components/layout/Layout';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Analytics from './pages/Analytics';
-import Settings from './pages/Settings';
-import Users from './pages/Users';
-import Editu from './pages/Editu';
-import Editc from './pages/Editc';
-import Order from './pages/Order';
-import Viewo from './pages/Viewo';
-import Vendor from './pages/Vendor';
-import Vendoroverview from './pages/Vendoroverview';
-import Editm from './pages/Editm';
-import Editv from './pages/Editv';
-import Riders from './pages/Riders';
-import Riderd from './pages/Riderd';
-import Review from './pages/Revenue';
-import Revenue from './pages/Revenue';
-import Editrider from './pages/Editrider';
-import Vouchers from './pages/Vouchers';
-import Specialo from './pages/Specialo';
-import Transactions from './pages/Transactions';
-import Viewt from './pages/Viewt';
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Layout from "./components/layout/Layout";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
+import Users from "./pages/user/Users";
+import Editu from "./pages/user/Editu";
+
+import Order from "./pages/order/Order";
+import Viewo from "./pages/order/Viewo";
+
+
+
+import Review from "./pages/Revenue";
+import Revenue from "./pages/Revenue";
+
+import Vouchers from "./pages/Vouchers";
+import Specialo from "./pages/Specialo";
+import Transactions from "./pages/Transactions";
+import Viewt from "./pages/Viewt";
+import Editc from "./pages/user/Editc";
+import VendorManagement from "./pages/vendor/Vendor";
+import Vendoroverview from "./pages/vendor/Vendoroverview";
+import Editv from "./pages/vendor/Editv";
+import Editm from "./pages/vendor/Editm";
+import Riders from "./pages/riders/Riders";
+import Riderd from "./pages/riders/Riderd";
+import Editrider from "./pages/riders/Editrider";
+import Addspecial from "./pages/Addspecial";
+import Building from "./pages/Building";
 
 
 function App() {
   // Minimal auth (persists across refresh)
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('authenticated') === 'true';
+    return localStorage.getItem("authenticated") === "true";
   });
 
   useEffect(() => {
     if (isAuthenticated) {
-      localStorage.setItem('authenticated', 'true');
+      localStorage.setItem("authenticated", "true");
     } else {
-      localStorage.removeItem('authenticated');
+      localStorage.removeItem("authenticated");
     }
   }, [isAuthenticated]);
 
@@ -83,14 +93,13 @@ function App() {
           <Route path="/orders/view" element={<Viewo />} />
 
           {/* Vendor Management */}
-          <Route path="/vendors" element={<Vendor />} />
+          <Route path="/vendors" element={<VendorManagement />} />
           <Route path="/vendors/overview" element={<Vendoroverview />} />
           <Route path="/vendors/edit" element={<Editv />} />
           <Route path="/vendors/edit-menu" element={<Editm />} />
 
           {/* Additional Routes */}
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/analytics" element={<Analytics />} />
+     
 
           {/* Riders */}
           <Route path="/riders" element={<Riders />} />
@@ -106,17 +115,23 @@ function App() {
           {/* special-order */}
           <Route path="/special-orders" element={<Specialo />} />
 
-           {/* special-order */}
+          {/* special-order */}
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/transactions/view-transactions" element={<Viewt />} />
 
+          <Route path="/add-special" element={<Addspecial />} />
+
+          <Route path="/building" element={<Building />} />
 
           {/* Catch-all for nested routes */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
 
         {/* Catch-all for routes outside of Layout */}
-        <Route path="*" element={<Navigate to={isAuthenticated ? '/' : '/login'} replace />} />
+        <Route
+          path="*"
+          element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />}
+        />
       </Routes>
     </Router>
   );

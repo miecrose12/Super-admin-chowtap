@@ -3,7 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, ShoppingBag, Store, Bike, 
   Wallet, Ticket, Gift, ReceiptText, ShieldCheck, 
-  LifeBuoy, LogOut, ChevronLeft 
+  LifeBuoy, LogOut, ChevronLeft, 
+  Building2
 } from 'lucide-react';
 import logo from '../../assets/Vector.svg';
 
@@ -122,6 +123,12 @@ const Sidebar = ({
       useLucide: false 
     },
     { path: '/transactions', icon: ReceiptText, label: 'Transactions', useLucide: true },
+    { 
+      path: '/building', 
+      icon: Building2, 
+      label: 'Buildings Management', 
+      useLucide: true 
+    },
   ];
 
   const isRouteActive = (menuPath) => {
