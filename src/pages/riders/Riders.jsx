@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 
 
-import { generateRidersData } from '../../utils/riders';
+import { generateRidersData } from '../../utils/Riders';
 import RidersHeader from '../../components/riders/RidersHeader';
 import RidersSummaryCards from '../../components/riders/RidersSummaryCards';
 

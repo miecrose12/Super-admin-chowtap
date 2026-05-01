@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { generateMockData } from '../../utils/dataGenerator';
+import { generateMockData } from '../../utils/Datagenerator';
 import StatsCardsSection from '../../components/usersmanagement/Statscardsection';
 import SearchFilters from '../../components/usersmanagement/Searchfilters';
 import UsersTable from '../../components/usersmanagement/Userstable';

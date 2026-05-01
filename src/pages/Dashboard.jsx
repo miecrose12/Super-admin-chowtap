@@ -6,7 +6,7 @@ import logo2_1 from '../assets/dashboard.svg';
 import logo2_2 from '../assets/icon6.svg';
 import logo2_3 from '../assets/icon4.svg';
 import logo2_4 from '../assets/dashboard.svg';
-import DateRangeSelector from '../components/dashboard/Daterangeselector';
+import DateRangeSelector from '../components/dashboard/DateRangeSelector';
 import TopCampusesTable from '../components/dashboard/TopCampusesTable';
 import VouchersCard from '../components/dashboard/VouchersCard';
 import ActionRequiredCard from '../components/dashboard/ActionRequiredCard';
