@@ -1,5 +1,5 @@
 import { Bike, Users, ShoppingBag, Star } from 'lucide-react';
-import { calculateSummary } from '../../utils/riders';
+import { calculateSummary } from '../../utils/Riders';
 
 export default function RidersSummaryCards({ riders }) {
   const { totalRiders, activeRiders, totalActiveOrders, avgRating } = calculateSummary(riders);

@@ -2,7 +2,7 @@
 import { Calendar } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { dateOptions } from '../../utils/riders';
+import { dateOptions } from '../../utils/Riders';
 
 export default function RidersHeader({
   selectedDateRange,
