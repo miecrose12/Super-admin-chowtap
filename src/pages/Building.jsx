@@ -23,7 +23,7 @@ export default function BuildingsManagement() {
   };
 
   return (
-    <div className="h-screen w-full bg-[#0a0a0a] text-white p-6 font-sans flex flex-col overflow-hidden relative">
+    <div className="h-screen w-full bg-[#0E0E0E] text-white p-6 font-sans flex flex-col overflow-hidden relative">
       
       {/* Header with Add Button */}
       <div className="flex justify-between items-center mb-6 shrink-0">
@@ -38,7 +38,7 @@ export default function BuildingsManagement() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 shrink-0">
-        <div className="bg-[#151515] p-5 rounded border border-white/5 shadow-sm">
+        <div className="bg-[#131313] p-5 rounded border border-white/5 shadow-sm">
           <div className="flex justify-between items-start mb-4">
             <Building2 className="text-[#db7a26] w-6 h-6" strokeWidth={1.5} />
             <span className="text-[#db7a26] text-xs font-semibold">+4.2%</span>
